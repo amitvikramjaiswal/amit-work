@@ -1,0 +1,192 @@
+package com.manditrades.fragments;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import com.manditrades.R;
+import com.manditrades.activities.GovtSchemesActivity;
+import com.manditrades.activities.LivePricesActivity;
+import com.manditrades.activities.MandiNewsActivity;
+import com.manditrades.util.LanguageScripts;
+
+public class HomeFragment extends Fragment {
+
+	private Context context;
+	private SharedPreferences preferences;
+
+	private Button buyBtn;
+	private Button sellBtn;
+	private Button createAlertBtn;
+	private Button viewAlertsBtn;
+	private Button mandiNewsBtn;
+	private Button govtFeedbackBtn;
+	private Button mandiPricesBtn;
+	private TextView buyTV;
+	private TextView sellTV;
+	private TextView priceAlertTV;
+	private TextView mandiNewsTV;
+	private TextView govtFeedbackTV;
+	private TextView mandiPricesTV;
+	private ViewPager mViewPager;
+	private View rootView;
+	private boolean hasInitialized;
+
+	public HomeFragment() {
+
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		rootView = inflater.inflate(R.layout.fragment_home, container, false);
+
+		context = container.getContext();
+
+		mViewPager = (ViewPager) getActivity().findViewById(R.id.pager);
+
+		initComponent();
+
+		setListeners();
+
+		return rootView;
+	}
+
+	@Override
+	public void setMenuVisibility(boolean menuVisible) {
+		super.setMenuVisibility(menuVisible);
+		if (menuVisible && hasInitialized) {
+			setValues();
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		setValues();
+	}
+
+	private void setValues() {
+		int language = preferences.getInt("LANGUAGE", 0);
+		LanguageScripts scripts = new LanguageScripts();
+
+		((Activity) context).getActionBar().setTitle(
+				scripts.mandiTrades[language]);
+
+		buyTV.setText(scripts.buy[language]);
+		sellTV.setText(scripts.sell[language]);
+		priceAlertTV.setText(scripts.priceAlert[language]);
+		mandiNewsTV.setText(scripts.mandinews[language]);
+		govtFeedbackTV.setText(scripts.governmentfeedback[language]);
+		mandiPricesTV.setText(scripts.mandiprices[language]);
+
+		((Activity) context).getActionBar().setTitle(
+				scripts.mandiTrades[language]);
+	}
+
+	private void initComponent() {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		buyBtn = (Button) rootView.findViewById(R.id.buyBtn);
+		sellBtn = (Button) rootView.findViewById(R.id.sellBtn);
+		createAlertBtn = (Button) rootView.findViewById(R.id.create_alert_btn);
+		viewAlertsBtn = (Button) rootView.findViewById(R.id.view_alert_btn);
+		mandiNewsBtn = (Button) rootView.findViewById(R.id.mandi_news_btn);
+		govtFeedbackBtn = (Button) rootView
+				.findViewById(R.id.govt_feedback_btn);
+		mandiPricesBtn = (Button) rootView.findViewById(R.id.prices_btn);
+		buyTV = (TextView) rootView.findViewById(R.id.buy_tv);
+		sellTV = (TextView) rootView.findViewById(R.id.sell_tv);
+		priceAlertTV = (TextView) rootView.findViewById(R.id.price_alert_tv);
+		mandiNewsTV = (TextView) rootView.findViewById(R.id.mandi_news_tv);
+		govtFeedbackTV = (TextView) rootView
+				.findViewById(R.id.govt_feedback_tv);
+		mandiPricesTV = (TextView) rootView.findViewById(R.id.prices_tv);
+
+		hasInitialized = true;
+	}
+
+	private void setListeners() {
+		buyBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				mViewPager.setCurrentItem(0);
+			}
+		});
+
+		sellBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				mViewPager.setCurrentItem(2);
+			}
+		});
+
+		createAlertBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				Fragment fragment = new AlertsFragment();
+				FragmentTransaction transaction = getFragmentManager()
+						.beginTransaction();
+				transaction.replace(R.id.frame_container, fragment);
+
+				Bundle args = new Bundle();
+				args.putString("FROM", "AlertsFragment");
+				fragment.setArguments(args);
+
+				transaction.commit();
+			}
+		});
+
+		viewAlertsBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+			}
+		});
+
+		mandiNewsBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(context, MandiNewsActivity.class);
+				startActivity(intent);
+			}
+		});
+
+		mandiPricesBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(context, LivePricesActivity.class);
+				startActivity(intent);
+			}
+		});
+
+		govtFeedbackBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(context, GovtSchemesActivity.class);
+				startActivity(intent);
+			}
+		});
+
+	}
+
+}

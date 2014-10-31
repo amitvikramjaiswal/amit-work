@@ -1,0 +1,71 @@
+package com.manditrades.activities;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.manditrades.R;
+import com.manditrades.adapters.AlertListAdapter;
+import com.manditrades.fragments.CreateAlertFragment;
+import com.manditrades.fragments.NewSaleFragment;
+import com.manditrades.jsonwrapper.AlertList;
+
+public class AlertsActivity extends FragmentActivity {
+
+	private Context context;
+	private SharedPreferences preferences;
+	private AlertList alertList;
+	private ListView alertsLV;
+	private int position;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_create_alert);
+		context = this;
+
+		setFragment(position);
+	}
+
+	private void setFragment(int position) {
+		Fragment fragment = null;
+
+		switch (position) {
+		case 0:
+			fragment = new CreateAlertFragment();
+			break;
+		case 1:
+			fragment = new NewSaleFragment();
+			break;
+		case 2:
+			fragment = new NewSaleFragment();
+			break;
+
+		default:
+			break;
+		}
+
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		fragmentManager.beginTransaction()
+				.replace(R.id.frame_container, fragment).commit();
+	}
+
+}

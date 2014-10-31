@@ -1,0 +1,88 @@
+package com.manditrades.jsonwrapper;
+
+import com.google.gson.annotations.SerializedName;
+
+public class Alert extends BaseWrapper {
+
+	private static final long serialVersionUID = 1L;
+
+	@SerializedName("_id")
+	private MTId alertId;
+
+	@SerializedName("mobile_no")
+	private String mobileNo;
+
+	@SerializedName("commodity")
+	private String commodity;
+
+	@SerializedName("deviceToken")
+	private String deviceId;
+
+	@SerializedName("device_info")
+	private String deviceInfo;
+
+	@SerializedName("price")
+	private String price;
+	
+	@SerializedName("status")
+	private String status;
+	
+	@SerializedName("date_of_creation")
+	private String price;
+	
+    "deviceArn": "arn:aws:sns:ap-southeast-1:366568872488:endpoint/GCM/MandiTest/dcc1336a-0bb4-3b6f-8fc0-8e3a6306735c",
+    "date_of_creation": {
+        "date": "2014-10-28 16:22:22",
+        "timezone_type": 3,
+        "timezone": "Asia/Calcutta"
+    }
+
+	public MTId getAlertId() {
+		return alertId;
+	}
+
+	public void setAlertId(MTId alertId) {
+		this.alertId = alertId;
+	}
+
+	public String getMobileNo() {
+		return mobileNo;
+	}
+
+	public void setMobileNo(String mobileNo) {
+		this.mobileNo = mobileNo;
+	}
+
+	public String getCommodity() {
+		return commodity;
+	}
+
+	public void setCommodity(String commodity) {
+		this.commodity = commodity;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+
+	public String getDeviceInfo() {
+		return deviceInfo;
+	}
+
+	public void setDeviceInfo(String deviceInfo) {
+		this.deviceInfo = deviceInfo;
+	}
+
+	public String getPrice() {
+		return price;
+	}
+
+	public void setPrice(String price) {
+		this.price = price;
+	}
+
+}

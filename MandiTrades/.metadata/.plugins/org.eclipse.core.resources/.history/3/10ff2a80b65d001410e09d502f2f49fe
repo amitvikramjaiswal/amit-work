@@ -1,0 +1,240 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/blankbg" >
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/main_menu_top_margin"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="@dimen/width_main_menu_ll"
+                android:layout_height="@dimen/height_main_menu_ll"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/buyBtn"
+                    android:layout_width="@dimen/size_main_menu_icon"
+                    android:layout_height="@dimen/size_main_menu_icon"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/home_screen_first_row_top_margin"
+                    android:background="@drawable/buy_icon" />
+
+                <TextView
+                    android:id="@+id/buy_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Buy"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/width_main_menu_ll"
+                android:layout_height="@dimen/height_main_menu_ll"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/sellBtn"
+                    android:layout_width="@dimen/size_main_menu_icon"
+                    android:layout_height="@dimen/size_main_menu_icon"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/home_screen_first_row_top_margin"
+                    android:background="@drawable/sell_icon" />
+
+                <TextView
+                    android:id="@+id/sell_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Sell"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="@dimen/width_main_menu_ll"
+                android:layout_height="@dimen/height_main_menu_ll"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="@dimen/size_main_menu_icon_rl"
+                    android:layout_height="@dimen/size_main_menu_icon_rl"
+                    android:layout_gravity="center" >
+
+                    <Button
+                        android:id="@+id/Button01"
+                        android:layout_width="@dimen/size_main_menu_icon"
+                        android:layout_height="@dimen/size_main_menu_icon"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/create_alert_icon" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/TextView01"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Mandi Prices"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/width_main_menu_ll"
+                android:layout_height="@dimen/height_main_menu_ll"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="@dimen/size_main_menu_icon_rl"
+                    android:layout_height="@dimen/size_main_menu_icon_rl"
+                    android:layout_gravity="center" >
+
+                    <Button
+                        android:id="@+id/view_alert_btn"
+                        android:layout_width="@dimen/size_main_menu_icon"
+                        android:layout_height="@dimen/size_main_menu_icon"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/viewalerts" />
+
+                    <TextView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:background="@drawable/round_shape_red"
+                        android:gravity="center"
+                        android:text="28"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/price_alert_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="View Alert"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="@dimen/width_main_menu_ll"
+                android:layout_height="@dimen/height_main_menu_ll"
+                android:orientation="vertical" >
+
+                <RelativeLayout
+                    android:layout_width="@dimen/size_main_menu_icon_rl"
+                    android:layout_height="@dimen/size_main_menu_icon_rl"
+                    android:layout_gravity="center" >
+
+                    <Button
+                        android:id="@+id/mandi_news_btn"
+                        android:layout_width="@dimen/size_main_menu_icon"
+                        android:layout_height="@dimen/size_main_menu_icon"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/news_icon" />
+
+                    <TextView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:background="@drawable/round_shape_red"
+                        android:gravity="center"
+                        android:text="28"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/mandi_news_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Mandi News"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/width_main_menu_ll"
+                android:layout_height="@dimen/height_main_menu_ll"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <Button
+                    android:id="@+id/govt_feedback_btn"
+                    android:layout_width="@dimen/size_main_menu_icon"
+                    android:layout_height="@dimen/size_main_menu_icon"
+                    android:layout_gravity="center"
+                    android:background="@drawable/feedback_icon" />
+
+                <TextView
+                    android:id="@+id/govt_feedback_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Govt. Feedback"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="@dimen/width_main_menu_ll"
+                android:layout_height="@dimen/height_main_menu_ll"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/prices_btn"
+                    android:layout_width="@dimen/size_main_menu_icon"
+                    android:layout_height="@dimen/size_main_menu_icon"
+                    android:layout_gravity="center"
+                    android:background="@drawable/price_icon" />
+
+                <TextView
+                    android:id="@+id/prices_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text="Mandi Prices"
+                    android:textSize="@dimen/text_size_large" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="35dp"
+        android:src="@drawable/data" />
+
+</RelativeLayout>

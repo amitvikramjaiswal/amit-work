@@ -1,0 +1,107 @@
+package com.manditrades.activities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.manditrades.R;
+import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTAlertUtil;
+import com.manditrades.util.MTURLHelper;
+import com.manditrades.util.MTUtil;
+
+public class CreateAlertActivity extends Activity {
+
+	private Context context;
+	private SharedPreferences preferences;
+	private EditText priceET;
+	private Button createAlertBtn;
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.create_alert);
+
+		context = this;
+
+		initComponent();
+		setActionBar();
+		setListeners();
+
+	}
+
+	private void setActionBar() {
+		MTUtil.setActionBar(context, "Create Alert");
+	}
+
+	private void setListeners() {
+		createAlertBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+
+				String price = priceET.getText().toString();
+				if (price == null || price.equals("")) {
+					MTAlertUtil.showMessesBox(context, "Mandi Trades",
+							"Please enter the price.",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+
+								}
+							});
+				} else {
+					createAlert();
+				}
+
+			}
+		});
+	}
+
+	private void createAlert() {
+		String url = MTURLHelper
+				.getAPIEndpointDevelopmentURL(MTURLHelper.notificationURL);
+		String method = "POST";
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+		Object[] objects = { url, method, params };
+
+		params.add(new BasicNameValuePair("mobile_no", "7204365344"));
+		params.add(new BasicNameValuePair("device_id", MTUtil
+				.getDeviceId(context)));
+		params.add(new BasicNameValuePair("device_info", "ANDROID"));
+		params.add(new BasicNameValuePair("commodity", "Apple"));
+		params.add(new BasicNameValuePair("price", "23"));
+		params.add(new BasicNameValuePair("delete", "false"));
+
+		JsonDataCallback callback = new JsonDataCallback(context) {
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				System.out.println(responseJson);
+			}
+		};
+
+		callback.execute(objects);
+	}
+
+	private void initComponent() {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		priceET = (EditText) findViewById(R.id.price_et);
+		createAlertBtn = (Button) findViewById(R.id.create_alert);
+	}
+}
