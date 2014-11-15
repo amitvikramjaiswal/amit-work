@@ -1,0 +1,121 @@
+package com.manditrades.activities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+
+import com.google.gson.Gson;
+import com.manditrades.R;
+import com.manditrades.adapters.ViewAlertListAdapter;
+import com.manditrades.cache.UserProfileCache;
+import com.manditrades.jsonwrapper.MTSellerList;
+import com.manditrades.jsonwrapper.UserProfile;
+import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTURLHelper;
+import com.manditrades.util.MTUtil;
+
+public class PriceAlertActivity extends Activity {
+
+	private Context context;
+	private ListView notificationsLV;
+	private SharedPreferences preferences;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.activity_price_alert);
+
+		context = this;
+
+		initComponents();
+		setActionBar();
+		setValues();
+		setListeners();
+
+	}
+
+	private void setListeners() {
+
+	}
+
+	private void setValues() {
+
+		UserProfile profile = UserProfileCache.getUserProfile().getProfile();
+		String mobile;
+		if (profile != null)
+			mobile = profile.getMobile();
+		else {
+			mobile = preferences.getString("MOBILE_NO", "");
+		}
+
+		String url = MTURLHelper
+				.getAPIEndpointURL(MTURLHelper.getNotificationsUrl);
+		String method = "POST";
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("seller_mobile", mobile));
+		params.add(new BasicNameValuePair("from", "1"));
+		params.add(new BasicNameValuePair("to", "100"));
+
+		Object[] objects = { url, method, params };
+
+		JsonDataCallback callback = new JsonDataCallback(context) {
+
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				Gson gson = new Gson();
+
+				if (responseJson.toString().contains("status"))
+					return;
+				final MTSellerList sellerList = gson.fromJson(
+						responseJson.toString(), MTSellerList.class);
+				ViewAlertListAdapter viewAlertListAdapter = new ViewAlertListAdapter(
+						context, sellerList.getMTSellerList());
+				notificationsLV.setAdapter(viewAlertListAdapter);
+
+				notificationsLV
+						.setOnItemClickListener(new OnItemClickListener() {
+
+							@Override
+							public void onItemClick(AdapterView<?> adapterView,
+									View view, int position, long l) {
+								Intent intent = new Intent(context,
+										SellerInfoActivity.class);
+								intent.putExtra("SELLER_INFO", sellerList
+										.getMTSellerList().get(position));
+
+								startActivity(intent);
+							}
+						});
+
+			}
+		};
+
+		callback.execute(objects);
+
+	}
+
+	private void setActionBar() {
+		MTUtil.setActionBar(context, "View Alerts", true);
+	}
+
+	private void initComponents() {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		notificationsLV = (ListView) findViewById(R.id.notifications_lv);
+	}
+
+}

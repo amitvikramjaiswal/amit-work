@@ -1,0 +1,258 @@
+package com.manditrades.activities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.manditrades.R;
+import com.manditrades.cache.UserProfileCache;
+import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTAlertUtil;
+import com.manditrades.util.MTURLHelper;
+import com.manditrades.util.MTUtil;
+
+public class SignInSignUpActivity extends Activity {
+
+	private Context context;
+	private Button submitBtn;
+	private EditText mobileET;
+	private EditText otpET;
+	private LinearLayout mobileLL;
+	private LinearLayout otpLL;
+
+	private String strOtp;
+	private String deviceStatus;
+	private String verificationStatus;
+
+	private String deviceId;
+	private String mobile;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.first_screen);
+
+		getActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		getActionBar().setCustomView(R.layout.layout_action_bar);
+
+		View view = LayoutInflater.from(this).inflate(
+				R.layout.layout_action_bar, null);
+
+		TextView customView = (TextView) view
+				.findViewById(R.id.action_bar_title);
+
+		customView.setText("Mandi Trades");
+
+		ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+				ActionBar.LayoutParams.MATCH_PARENT,
+				ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+
+		getActionBar().setCustomView(view, params);
+
+		initComponents();
+
+		setListeners();
+
+	}
+
+	private void setListeners() {
+		submitBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mobileLL.getVisibility() == View.VISIBLE
+						&& otpLL.getVisibility() == View.GONE) {
+
+					String mobileNo = mobileET.getText().toString();
+					if (mobileNo != null && mobileNo.length() == 10) {
+						mobile = mobileNo;
+						submitMobileNumber(mobile, MTUtil.getDeviceId(context));
+					} else
+						MTAlertUtil.showMessesBox(context,
+								"Invalid Mobile No.",
+								"Enter a valid mobile no.",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								});
+				} else if (otpLL.getVisibility() == View.VISIBLE
+						&& mobileLL.getVisibility() == View.GONE) {
+					submitOTP(otpET.getText().toString());
+				}
+			}
+		});
+	}
+
+	private void initComponents() {
+		context = this;
+		mobileET = (EditText) findViewById(R.id.mobile_et);
+		otpET = (EditText) findViewById(R.id.otp_et);
+		submitBtn = (Button) findViewById(R.id.submit_btn);
+		mobileLL = (LinearLayout) findViewById(R.id.mobile_ll);
+		otpLL = (LinearLayout) findViewById(R.id.otp_ll);
+	}
+	
+	public void resendOtp(View view) {
+		
+	}
+
+	private void submitMobileNumber(final String mobile, String deviceId) {
+		String url = MTURLHelper.getAPIEndpointURL(MTURLHelper.signInSignUpURL);
+		url += "mobile_no=" + mobile + "&device=" + deviceId;
+		String method = "GET";
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+		this.deviceId = deviceId;
+
+		Object[] objects = { url, method, params };
+
+		JsonDataCallback callback = new JsonDataCallback(context) {
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				try {
+					JSONObject root = responseJson.getJSONObject("root");
+					if (root.has("OTP"))
+						strOtp = root.getString("OTP");
+					deviceStatus = root.getString("Device Status");
+					verificationStatus = root.getString("Verification Status");
+
+					if (deviceStatus.equals("Active")
+							&& verificationStatus.equals("Verified")) {
+						UserProfileCache.getUserProfile().setProfile(null,
+								mobile);
+						Intent intent = new Intent(context, HomeActivity.class);
+						startActivity(intent);
+					} else {
+						mobileLL.setVisibility(View.GONE);
+						otpLL.setVisibility(View.VISIBLE);
+
+						MTAlertUtil.showMessesBox(context, "Mandi Trades",
+								"Your OTP for login is : " + strOtp,
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+									}
+								});
+
+					}
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		callback.execute(objects);
+	}
+
+	private void submitOTP(String enteredOtp) {
+
+		if (enteredOtp.equals(strOtp)) {
+			sendOTPVerifiedRequest(enteredOtp);
+		} else {
+			MTAlertUtil.showMessesBox(context, "Invalid OTP",
+					"Enter a valid OTP", new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+						}
+					});
+		}
+
+	}
+
+	private void sendOTPVerifiedRequest(String enteredOtp) {
+		String url = MTURLHelper.getAPIEndpointURL(MTURLHelper.signInSignUpURL);
+		url += "mobile_no=" + mobile + "&device=" + deviceId + "&otp="
+				+ enteredOtp;
+		String method = "GET";
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+		Object[] objects = { url, method, params };
+
+		JsonDataCallback callback = new JsonDataCallback(context) {
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				try {
+					JSONObject root = responseJson.getJSONObject("root");
+
+					if (root.has("status")) {
+						MTAlertUtil.showMessesBox(context, "Unknown Device",
+								"Device not registered.",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+									}
+								});
+					} else {
+						// strOtp = root.getString("OTP");
+						deviceStatus = root.getString("Device Status");
+						verificationStatus = root
+								.getString("Verification Status");
+
+						if (deviceStatus.equals("Active")
+								&& verificationStatus.equals("Verified")) {
+
+							UserProfileCache.getUserProfile().setProfile(null,
+									mobile);
+
+							SharedPreferences preferences = PreferenceManager
+									.getDefaultSharedPreferences(context);
+							preferences.edit().putString("MOBILE_NO", mobile)
+									.commit();
+
+							Intent intent = new Intent(context,
+									SettingActivity.class);
+							intent.putExtra("IS_FIRST_TIME", true);
+							startActivity(intent);
+
+						}
+
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		callback.execute(objects);
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		finish();
+		System.exit(0);
+
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		finish();
+	}
+
+}

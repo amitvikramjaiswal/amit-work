@@ -1,0 +1,209 @@
+package com.manditrades.jsonwrapper;
+
+import java.util.ArrayList;
+
+import com.google.gson.annotations.SerializedName;
+
+public class MTSeller extends BaseWrapper {
+
+	private static final long serialVersionUID = 1L;
+
+	@SerializedName("id")
+	private MTId sellerId;
+
+	@SerializedName("seller_name")
+	private String sellerName;
+
+	@SerializedName("seller_mobile")
+	private String sellerMobileNo;
+
+	@SerializedName("commodity")
+	private String sellerCommodity;
+
+	@SerializedName("variety")
+	private String sellerVariety;
+
+	@SerializedName("price")
+	private String sellerPrice;
+
+	@SerializedName("quantity")
+	private String sellerQuantity;
+
+	@SerializedName("member_since")
+	private String memberSince;
+
+	@SerializedName("rating")
+	private String rating;
+
+	// @SerializedName("tag")
+	// private String tag;
+
+	@SerializedName("imagedate")
+	private String imageDate;
+
+	@SerializedName("category")
+	private String category;
+
+	@SerializedName("user_id")
+	private MTId userId;
+
+	@SerializedName("date_of_creation")
+	private CreationDate DOC;
+
+	// @SerializedName("date_of_creation")
+	// private String DOC;
+
+	@SerializedName("no_calls")
+	private ArrayList<String> noOfCalls;
+
+	@SerializedName("address")
+	private String sellerAddress;
+
+	@SerializedName("latlong")
+	private String[] latLang = new String[2];
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
+
+	public String getSellerMobileNo() {
+		return sellerMobileNo;
+	}
+
+	public void setSellerMobileNo(String sellerMobileNo) {
+		this.sellerMobileNo = sellerMobileNo;
+	}
+
+	public String getSellerCommodity() {
+		return sellerCommodity;
+	}
+
+	public void setSellerCommodity(String sellerCommodity) {
+		this.sellerCommodity = sellerCommodity;
+	}
+
+	public String getSellerVariety() {
+		return sellerVariety;
+	}
+
+	public void setSellerVariety(String sellerVariety) {
+		this.sellerVariety = sellerVariety;
+	}
+
+	public String getSellerPrice() {
+		return sellerPrice;
+	}
+
+	public void setSellerPrice(String sellerPrice) {
+		this.sellerPrice = sellerPrice;
+	}
+
+	public String getSellerQuantity() {
+		return sellerQuantity;
+	}
+
+	public void setSellerQuantity(String sellerQuantity) {
+		this.sellerQuantity = sellerQuantity;
+	}
+
+	public String getMemberSince() {
+		return memberSince;
+	}
+
+	public void setMemberSince(String memberSince) {
+		this.memberSince = memberSince;
+	}
+
+	public String getRating() {
+		return rating;
+	}
+
+	public void setRating(String rating) {
+		this.rating = rating;
+	}
+
+	// public String getTag() {
+	// return tag;
+	// }
+	//
+	// public void setTag(String tag) {
+	// this.tag = tag;
+	// }
+
+	public CreationDate getDOC() {
+		return DOC;
+	}
+
+	public String getImageDate() {
+		return imageDate;
+	}
+
+	public void setImageDate(String imageDate) {
+		this.imageDate = imageDate;
+	}
+
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public MTId getUserId() {
+		return userId;
+	}
+
+	public void setUserId(MTId userId) {
+		this.userId = userId;
+	}
+
+	public void setDOC(CreationDate dOC) {
+		DOC = dOC;
+	}
+
+	// public String getDOC() {
+	// return DOC;
+	// }
+	//
+	// public void setDOC(String dOC) {
+	// DOC = dOC;
+	// }
+
+	public String getSellerAddress() {
+		return sellerAddress;
+	}
+
+	public void setSellerAddress(String sellerAddress) {
+		this.sellerAddress = sellerAddress;
+	}
+
+	public String[] getLatLang() {
+		return latLang;
+	}
+
+	public void setLatLang(String[] latLang) {
+		this.latLang = latLang;
+	}
+
+	public ArrayList<String> getNoOfCalls() {
+		return noOfCalls;
+	}
+
+	public void setNoOfCalls(ArrayList<String> noOfCalls) {
+		this.noOfCalls = noOfCalls;
+	}
+
+	public MTId getSellerId() {
+		return sellerId;
+	}
+
+	public void setSellerId(MTId sellerId) {
+		this.sellerId = sellerId;
+	}
+
+}

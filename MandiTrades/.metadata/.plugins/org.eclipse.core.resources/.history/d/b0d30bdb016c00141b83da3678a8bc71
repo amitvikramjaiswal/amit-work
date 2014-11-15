@@ -1,0 +1,44 @@
+package com.manditrades.activities;
+
+import com.manditrades.R;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.webkit.WebView;
+
+public class ShowEULAActivity extends Activity {
+	
+	private WebView termsWV;
+	private View rootView;
+	private SharedPreferences preferences;
+	private Context context;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.activity_terms);
+
+		context = this;
+
+		initComponents();
+		setValues();
+
+	}
+
+	private void setValues() {
+		termsWV.loadData(
+				context.getResources().getString(R.string.termsconditions),
+				"text/html", "utf-8");
+	}
+
+	private void initComponents() {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		termsWV = (WebView) rootView.findViewById(R.id.terms);
+	}
+
+}

@@ -1,0 +1,119 @@
+package com.manditrades.adapters;
+
+import java.util.ArrayList;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.manditrades.R;
+import com.manditrades.jsonwrapper.NavDrawerItem;
+import com.manditrades.util.LanguageScripts;
+
+public class NavDrawerListAdapter extends BaseAdapter {
+
+	private Context context;
+	private ArrayList<NavDrawerItem> navDrawerItems;
+	private SharedPreferences preferences;
+	private int language;
+	private LanguageScripts scripts;
+
+	public NavDrawerListAdapter(Context context,
+			ArrayList<NavDrawerItem> navDrawerItems) {
+		this.context = context;
+		this.navDrawerItems = navDrawerItems;
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		language = preferences.getInt("LANGUAGE", 0);
+		scripts = new LanguageScripts();
+	}
+
+	@Override
+	public int getCount() {
+		return navDrawerItems.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return navDrawerItems.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent) {
+		if (convertView == null) {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.drawer_list_item, null);
+		}
+
+		ImageView imgIcon = (ImageView) convertView.findViewById(R.id.icon);
+		TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
+		TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
+		RelativeLayout rl = (RelativeLayout) convertView
+				.findViewById(R.id.line_relative_layout);
+
+		switch (position) {
+		case 1:
+			rl.setVisibility(View.VISIBLE);
+			txtTitle.setTextColor(Color.parseColor("#00bfff"));
+			txtTitle.setText(scripts.language[language]);
+			break;
+		case 2:
+			txtTitle.setText(scripts.myList[language]);
+			break;
+		case 3:
+			rl.setVisibility(View.VISIBLE);
+			txtTitle.setText(scripts.createAlert[language]);
+			break;
+		case 4:
+			txtTitle.setText(scripts.subscription[language]);
+			break;
+		case 5:
+			txtTitle.setText(scripts.settings[language]);
+			break;
+		case 6:
+			txtTitle.setText(scripts.termsnconditions[language]);
+			rl.setVisibility(View.VISIBLE);
+			break;
+		case 7:
+			txtTitle.setText(scripts.logOut[language]);
+			break;
+		case 8:
+			txtTitle.setText(scripts.mandihelp[language]);
+			break;
+		case 9:
+			txtTitle.setText(scripts.deleteAccount[language]);
+			break;
+		default:
+			rl.setVisibility(View.GONE);
+			txtTitle.setTextColor(Color.parseColor("#ffffff"));
+			break;
+		}
+
+		imgIcon.setImageResource(navDrawerItems.get(position).getIcon());
+
+		// displaying count
+		if (navDrawerItems.get(position).getCounterVisibility()) {
+			txtCount.setText(navDrawerItems.get(position).getCount());
+		} else {
+			// hide the counter view
+			txtCount.setVisibility(View.GONE);
+		}
+
+		return convertView;
+	}
+
+}

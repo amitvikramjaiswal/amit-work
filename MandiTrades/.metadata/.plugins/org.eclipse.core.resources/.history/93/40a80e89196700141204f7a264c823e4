@@ -1,0 +1,162 @@
+package com.manditrades.adapters;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.loopj.android.image.SmartImageView;
+import com.manditrades.R;
+import com.manditrades.cache.CommoditiesCache;
+import com.manditrades.jsonwrapper.MTSeller;
+import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTAlertUtil;
+import com.manditrades.util.MTFormatter;
+import com.manditrades.util.MTURLHelper;
+
+public class MyPostAdapter extends BaseAdapter {
+
+	private Context context;
+	private ArrayList<MTSeller> mtSellerList;
+	private SmartImageView commodityImage;
+	private TextView variety;
+	private TextView price;
+	private TextView quantity;
+	private TextView commodity;
+	private ImageView deleteIV;
+	private TextView creationDate;
+
+	AlertDialog.Builder alert;
+
+	public MyPostAdapter(Context context, ArrayList<MTSeller> mtSellerList) {
+		this.context = context;
+		this.mtSellerList = mtSellerList;
+	}
+
+	@Override
+	public int getCount() {
+		return mtSellerList.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return mtSellerList.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@SuppressLint("UseValueOf")
+	@Override
+	public View getView(final int position, View convertView, ViewGroup parent) {
+
+		if (convertView == null) {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.my_posts_list_template,
+					null);
+		}
+
+		commodityImage = (SmartImageView) convertView
+				.findViewById(R.id.image_view);
+		commodity = (TextView) convertView.findViewById(R.id.commodity);
+		variety = (TextView) convertView.findViewById(R.id.mp_variety);
+		creationDate = (TextView) convertView.findViewById(R.id.creation_date);
+		quantity = (TextView) convertView.findViewById(R.id.quantity_available);
+		price = (TextView) convertView.findViewById(R.id.price);
+		deleteIV = (ImageView) convertView.findViewById(R.id.delete);
+
+		String image_url = CommoditiesCache
+				.getCommoditiesCache()
+				.getCommodityUrl(
+						mtSellerList.get(position).getSellerCommodity() + "_"
+								+ mtSellerList.get(position).getSellerVariety());
+
+		variety.setText("Variety : "
+				+ mtSellerList.get(position).getSellerVariety());
+
+		creationDate.setText("Posted On : "
+				+ MTFormatter.formatDateMMDDYYYY(MTFormatter
+						.getDateFromString(mtSellerList.get(position).getDOC()
+								.getDate())));
+
+		quantity.setText(mtSellerList.get(position).getSellerQuantity()
+				+ "Kg available");
+
+		price.setText(mtSellerList.get(position).getSellerPrice() + " per kg");
+
+		commodity.setText(mtSellerList.get(position).getSellerCommodity());
+
+		commodityImage.setImageUrl(image_url);
+
+		deleteIV.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				String url = MTURLHelper
+						.getAPIEndpointURL(MTURLHelper.deleteMyPostURL);
+				String method = "POST";
+				List<NameValuePair> params = new ArrayList<NameValuePair>();
+				params.add(new BasicNameValuePair("seller_mobile", mtSellerList
+						.get(position).getSellerMobileNo()));
+				params.add(new BasicNameValuePair("imagedate", mtSellerList
+						.get(position).getImageDate()));
+
+				Object[] objects = { url, method, params };
+
+				JsonDataCallback callback = new JsonDataCallback(context) {
+
+					@Override
+					public void receiveData(JSONObject responseJson) {
+						try {
+							JSONObject root = responseJson
+									.getJSONObject("root");
+
+							String result = root.getString("result");
+
+							if (result.equalsIgnoreCase("removed successfully")) {
+								MTAlertUtil.showMessesBox(context,
+										"Mandi Trades",
+										"Post Deleted Successfully",
+										new DialogInterface.OnClickListener() {
+
+											@Override
+											public void onClick(
+													DialogInterface dialogInterface,
+													int i) {
+												mtSellerList.remove(position);
+												notifyDataSetChanged();
+											}
+										});
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+					}
+				};
+
+				callback.execute(objects);
+
+			}
+		});
+
+		return convertView;
+	}
+}

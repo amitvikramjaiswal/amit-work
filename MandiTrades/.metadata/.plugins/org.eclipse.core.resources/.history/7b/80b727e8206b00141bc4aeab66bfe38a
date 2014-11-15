@@ -1,0 +1,128 @@
+package com.manditrades.fragments;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import com.manditrades.R;
+import com.manditrades.util.LanguageScripts;
+
+public class MainViewPagerFragment extends Fragment implements OnPageChangeListener {
+
+	private Context context;
+	private SectionsPagerAdapter mSectionsPagerAdapter;
+	private List<Fragment> fragmentsList;
+	private SharedPreferences preferences;
+	private int language;
+	private LanguageScripts scripts;
+
+	public MainViewPagerFragment() {
+
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+
+		View rootView = inflater.inflate(R.layout.main_view_pager, container,
+				false);
+
+		context = container.getContext();
+
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		language = preferences.getInt("LANGUAGE", 0);
+
+		scripts = new LanguageScripts();
+
+		mSectionsPagerAdapter = new SectionsPagerAdapter(
+				getChildFragmentManager());
+
+		// Set up the ViewPager with the sections adapter.
+		ViewPager mViewPager = (ViewPager) rootView.findViewById(R.id.pager);
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+
+		mViewPager.setCurrentItem(1);
+
+		return rootView;
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		((Activity) context).getActionBar().setTitle(
+				mSectionsPagerAdapter.getPageTitle(1));
+	}
+
+	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+		public SectionsPagerAdapter(FragmentManager fm) {
+			super(fm);
+		}
+
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			fragmentsList = new ArrayList<Fragment>();
+
+			fragmentsList.add(new SellersListFragment());
+			fragmentsList.add(new HomeFragment());
+			fragmentsList.add(new NewSaleFragment());
+
+			return super.instantiateItem(container, position);
+		}
+
+		@Override
+		public Fragment getItem(int position) {
+			return fragmentsList.get(position);
+		}
+
+		@Override
+		public int getCount() {
+			return 3;
+		}
+
+		@Override
+		public CharSequence getPageTitle(int position) {
+
+			switch (position) {
+			case 0:
+				return scripts.sellerList[language];
+			case 1:
+				return scripts.mandiTrades[language];
+			case 2:
+				return scripts.selectCommodity[language];
+			}
+			return null;
+		}
+	}
+
+	@Override
+	public void onPageScrollStateChanged(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPageScrolled(int arg0, float arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPageSelected(int arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+}

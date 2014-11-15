@@ -1,0 +1,65 @@
+package com.manditrades.adapters;
+
+import java.util.List;
+
+import android.app.Activity;
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.TextView;
+
+import com.loopj.android.image.SmartImageView;
+import com.manditrades.R;
+import com.manditrades.jsonwrapper.MTNews;
+import com.manditrades.util.MTURLHelper;
+
+public class MandiNewsAdapter extends BaseAdapter {
+
+	private Context context;
+	private MTNews mtNews;
+	private List<MTNews> mtNewsList;
+	private TextView newsTV;
+	private SmartImageView thumbnail;
+
+	public MandiNewsAdapter(Context context, List<MTNews> mtNewsList) {
+		this.context = context;
+		this.mtNewsList = mtNewsList;
+	}
+
+	@Override
+	public int getCount() {
+		return mtNewsList.size();
+	}
+
+	@Override
+	public MTNews getItem(int position) {
+		return mtNewsList.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@Override
+	public View getView(final int position, View convertView, ViewGroup parent) {
+
+		if (convertView == null) {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.news_template, null);
+		}
+		mtNews = mtNewsList.get(position);
+		thumbnail = (SmartImageView) convertView
+				.findViewById(R.id.news_thumbnail);
+		newsTV = (TextView) convertView.findViewById(R.id.news_item_tv);
+
+		thumbnail.setImageUrl(String.format("%s/apimandi/v1/%s",
+				MTURLHelper.PRODUCTION_IP, mtNews.getImage()));
+		newsTV.setText(mtNews.getHeading());
+
+		return convertView;
+	}
+}

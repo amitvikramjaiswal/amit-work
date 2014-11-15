@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 2 elements to &apos;MandiTradesAndroid/src/com.manditrades.pushreceiver&apos;&#x0A;- Original project: &apos;AndroidMobilePushApp&apos;&#x0A;- Destination element: &apos;MandiTradesAndroid/src/com.manditrades.pushreceiver&apos;&#x0A;- Original elements:&#x0A;     com.amazonaws.androidtest.ExternalReceiver.java&#x0A;     com.amazonaws.androidtest.MessageReceivingService.java" description="Copy compilation units" destination="=MandiTradesAndroid/src&lt;com.manditrades.pushreceiver" element1="/src&lt;com.amazonaws.androidtest{ExternalReceiver.java" element2="/src&lt;com.amazonaws.androidtest{MessageReceivingService.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1411974948381" units="2" version="1.0"/>
+</session>

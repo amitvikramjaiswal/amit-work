@@ -1,0 +1,790 @@
+package com.manditrades.activities;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
+import android.media.MediaPlayer.OnPreparedListener;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Base64;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.MediaController;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
+import android.widget.ToggleButton;
+import android.widget.VideoView;
+
+import com.google.gson.Gson;
+import com.loopj.android.image.SmartImageView;
+import com.manditrades.R;
+import com.manditrades.adapters.ImagePagerAdapter;
+import com.manditrades.cache.CommoditiesCache;
+import com.manditrades.cache.UserProfileCache;
+import com.manditrades.jsonwrapper.MTSeller;
+import com.manditrades.jsonwrapper.MTSellerList;
+import com.manditrades.util.GPSTracker;
+import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTAlertUtil;
+import com.manditrades.util.MTFormatter;
+import com.manditrades.util.MTURLHelper;
+import com.manditrades.util.MTUtil;
+import com.viewpagerindicator.CirclePageIndicator;
+
+@SuppressLint("DefaultLocale")
+public class SellerInfoActivity extends Activity implements
+		OnSeekBarChangeListener {
+
+	private String source;
+	private ViewPager viewPager;
+	private CirclePageIndicator indicator;
+	private ToggleButton playPause;
+	private SeekBar seekBar;
+	private TextView sellerName;
+	private ImageView verified;
+	private RatingBar ratingBar;
+	private TextView memberSince;
+	private SmartImageView defaultImage;
+	private TextView quantity;
+	private TextView pricePerKg;
+	private TextView variety;
+	private TextView sellerAddress;
+	private TextView distance;
+	private TextView noOfCalls;
+	private Context context;
+	private ArrayList<String> imageUrls;
+	private MediaPlayer mediaPlayer;
+	private VideoView videoView;
+	private ImageView noVideoIV;
+	private RelativeLayout noAudioIV;
+	private MediaController mediaController;
+	private List<String> mImages = new ArrayList<String>();
+	private Button tabBtnImage;
+	private Button tabBtnVideo;
+	private Button tabBtnAudio;
+	private LinearLayout mediaLL;
+	private LinearLayout toggleLL;
+	private LinearLayout videoLL;
+	private LinearLayout imageLL;
+	private LinearLayout audioLL;
+	private RelativeLayout directionRL;
+	private RelativeLayout updateWishlistRL;
+	private RelativeLayout callRL;
+	private RelativeLayout interestedUserRL;
+	private ImageView updateWishlistIV;
+	private TextView postedOnTV;
+	private MTSeller seller;
+	private ImageView callIV;
+	private TextView reportPost;
+
+	private boolean hasReceivedResult;
+
+	private int CALL_REQUEST_CODE = 500;
+
+	String videoUrl;
+	String audioUrl;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.fragment_seller_info);
+		context = this;
+		source = getIntent().getStringExtra("SOURCE");
+		initComponents();
+		setSellerInfo();
+
+		setActionBar();
+
+		String url = MTURLHelper.getAPIEndpointURL(MTURLHelper.sellerInfoURL);
+		String method = "POST";
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("seller_mobile", seller
+				.getSellerMobileNo()));
+		params.add(new BasicNameValuePair("imagedate", seller.getImageDate()));
+
+		Object[] objects = { url, method, params };
+
+		JsonDataCallback callback = new JsonDataCallback(this) {
+
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				try {
+					JSONObject root = responseJson.getJSONObject("root");
+					JSONArray imagesArray = null;
+					hasReceivedResult = true;
+					Object object = root.get("images");
+					if (!object.equals(null))
+						imagesArray = root.getJSONArray("images");
+					audioUrl = root.getString("audio");
+					videoUrl = root.getString("video");
+					if (imagesArray != null) {
+						imageUrls = new ArrayList<String>();
+						for (int i = 0; i < imagesArray.length(); i++) {
+							System.out.println("!!!!!! "
+									+ imagesArray.getString(i));
+							imageUrls.add(imagesArray.getString(i));
+						}
+						viewPager.setAdapter(new ImagePagerAdapter(context,
+								imageUrls));
+						indicator.setViewPager(viewPager);
+
+					} else {
+						imageUrls = new ArrayList<String>();
+						imageUrls.add("noimage");
+						viewPager.setAdapter(new ImagePagerAdapter(context,
+								imageUrls));
+						indicator.setViewPager(viewPager);
+					}
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		callback.execute(objects);
+
+		setListeners();
+
+	}
+
+	private void setActionBar() {
+		final Activity activity = (Activity) context;
+		activity.getActionBar()
+				.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		activity.getActionBar().setCustomView(
+				R.layout.layout_action_bar_create_alert);
+
+		View view = LayoutInflater.from(activity).inflate(
+				R.layout.layout_action_bar_create_alert, null);
+
+		TextView customView = (TextView) view
+				.findViewById(R.id.action_bar_title);
+
+		customView.setText("Seller's Information");
+
+		final ImageButton sharePost = (ImageButton) view
+				.findViewById(R.id.create_img_btn);
+		sharePost.setImageResource(R.drawable.share);
+		final ImageButton backImgBtn = (ImageButton) view
+				.findViewById(R.id.backBtn);
+
+		backImgBtn.setVisibility(View.VISIBLE);
+
+		backImgBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				activity.finish();
+			}
+		});
+
+		sharePost.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(Intent.ACTION_SEND);
+				i.setType("text/plain");
+				i.putExtra(Intent.EXTRA_SUBJECT, "Sharing POST");
+				i.putExtra(
+						Intent.EXTRA_TEXT,
+						seller.getSellerName() + " is selling "
+								+ seller.getSellerQuantity() + " Kg of "
+								+ seller.getSellerCommodity() + "("
+								+ seller.getSellerVariety() + ") at Rs."
+								+ seller.getSellerPrice() + "/Kg");
+				startActivity(Intent.createChooser(i, "Share POST"));
+			}
+		});
+
+		ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+				ActionBar.LayoutParams.MATCH_PARENT,
+				ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+
+		activity.getActionBar().setCustomView(view, params);
+
+	}
+
+	private void setListeners() {
+
+		reportPost.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				String postId = seller.getPostId() != null ? seller.getPostId()
+						.getId() : seller.getSellerId().getId();
+				String[] to = { "ceo@farmobi.in" };
+				String[] cc = { "" };
+				sendEmail(
+						to,
+						cc,
+						"Report Post",
+						"Post ID : "
+								+ postId
+								+ "\n Post : "
+								+ seller.getSellerName()
+								+ " is selling "
+								+ seller.getSellerCommodity()
+								+ " for Rs."
+								+ seller.getSellerPrice()
+								+ " per kg \nPosted On : "
+								+ MTFormatter.formatDateString(MTFormatter
+										.getDateFromString(seller.getDOC()
+												.getDate()), false));
+			}
+		});
+
+		playPause.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				if (isChecked) {
+					startPlayback();
+				} else {
+					stopPlayback();
+				}
+			}
+
+		});
+
+		seekBar.setOnSeekBarChangeListener(this);
+
+		tabBtnImage.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				audioLL.setVisibility(View.GONE);
+				videoLL.setVisibility(View.GONE);
+				imageLL.setVisibility(View.VISIBLE);
+				tabBtnImage.setBackgroundColor(Color.parseColor("#ff9ab63c"));
+				tabBtnVideo.setBackgroundColor(Color.WHITE);
+				tabBtnImage.setTextColor(Color.WHITE);
+				tabBtnVideo.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setBackgroundColor(Color.WHITE);
+				tabBtnAudio.setTextColor(Color.parseColor("#ff9ab63c"));
+			}
+		});
+
+		tabBtnVideo.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				videoLL.setVisibility(View.VISIBLE);
+				imageLL.setVisibility(View.GONE);
+				audioLL.setVisibility(View.GONE);
+				tabBtnImage.setBackgroundColor(Color.WHITE);
+				tabBtnVideo.setBackgroundColor(Color.parseColor("#ff9ab63c"));
+				tabBtnVideo.setTextColor(Color.WHITE);
+				tabBtnImage.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setBackgroundColor(Color.WHITE);
+				tabBtnAudio.setTextColor(Color.parseColor("#ff9ab63c"));
+				if (hasReceivedResult)
+					if (!videoUrl.equals("null")) {
+						videoView.setVideoURI(Uri.parse(String.format(
+								"%s/v1/%s", MTURLHelper.getAPIEndpointURL(""),
+								videoUrl)));
+						videoView.setMediaController(mediaController);
+						videoView.seekTo(1);
+						videoView.setFitsSystemWindows(true);
+					} else {
+						videoView.setVisibility(View.GONE);
+						noVideoIV.setVisibility(View.VISIBLE);
+					}
+			}
+		});
+
+		tabBtnAudio.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				audioLL.setVisibility(View.VISIBLE);
+				imageLL.setVisibility(View.GONE);
+				videoLL.setVisibility(View.GONE);
+				tabBtnImage.setBackgroundColor(Color.WHITE);
+				tabBtnVideo.setBackgroundColor(Color.WHITE);
+				tabBtnVideo.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnImage.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setBackgroundColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setTextColor(Color.WHITE);
+				if (hasReceivedResult)
+					if (audioUrl.equals("null")) {
+						playPause.setVisibility(View.GONE);
+						seekBar.setVisibility(View.GONE);
+						noAudioIV.setVisibility(View.VISIBLE);
+					}
+
+			}
+		});
+
+		// down bar actions
+
+		directionRL.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				double latitude = 0.0;
+				double longitude = 0.0;
+				latitude = Double.valueOf(seller.getLatLang()[0]);
+				longitude = Double.valueOf(seller.getLatLang()[1]);
+				GPSTracker gpsTracker = new GPSTracker(context);
+				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri
+						.parse("http://maps.google.com/maps?" + "saddr="
+								+ gpsTracker.getLatitude() + ","
+								+ gpsTracker.getLongitude() + "&daddr="
+								+ latitude + "," + longitude));
+				intent.setClassName("com.google.android.apps.maps",
+						"com.google.android.maps.MapsActivity");
+				context.startActivity(intent);
+			}
+		});
+
+		interestedUserRL.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(context,
+						InterestedUserActivity.class);
+				intent.putExtra("INTERESTED_USERS", seller.getNoOfCalls());
+				context.startActivity(intent);
+			}
+		});
+
+		updateWishlistRL.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+
+				SharedPreferences preferences = PreferenceManager
+						.getDefaultSharedPreferences(context);
+				Gson gson = new Gson();
+				String json = null;
+				Editor prefsEditor = preferences.edit();
+				MTSellerList sellerList = null;
+				ArrayList<MTSeller> wishList;
+
+				if (source.equalsIgnoreCase("WishlistFragment")) {
+
+					json = preferences.getString("WISH_LIST", null);
+					sellerList = gson.fromJson(json, MTSellerList.class);
+					wishList = sellerList.getMTSellerList();
+					int index = Collections.binarySearch(wishList, seller,
+							new MTSellerComparator());
+
+					wishList.remove(index);
+
+					sellerList = new MTSellerList();
+					sellerList.setMTSellerList(wishList);
+
+					MTAlertUtil.showMessesBox(context, "Mandi Trades",
+							"Removed from Wishlist.",
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+
+								}
+							});
+
+				} else {
+
+					json = preferences.getString("WISH_LIST", null);
+
+					if (json != null) {
+						sellerList = gson.fromJson(json, MTSellerList.class);
+
+						wishList = sellerList.getMTSellerList();
+
+						int index = Collections.binarySearch(wishList, seller,
+								new MTSellerComparator());
+
+						if (index < 0) {
+							wishList.add(seller);
+							sellerList.setMTSellerList(wishList);
+
+							MTAlertUtil.showMessesBox(context, "Mandi Trades",
+									"Successfully Added To Wishlist",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+
+										}
+									});
+
+						} else {
+							MTAlertUtil.showMessesBox(context, "Mandi Trades",
+									"Already in Wishlist.",
+									new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+
+										}
+									});
+
+						}
+
+					} else {
+						wishList = new ArrayList<MTSeller>();
+						wishList.add(seller);
+
+						sellerList = new MTSellerList();
+						sellerList.setMTSellerList(wishList);
+
+						MTAlertUtil.showMessesBox(context, "Mandi Trades",
+								"Successfully Added To Wishlist",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+									}
+								});
+					}
+					if (sellerList != null) {
+						json = gson.toJson(sellerList);
+						prefsEditor.putString("WISH_LIST", json);
+						prefsEditor.commit();
+					}
+				}
+
+			}
+		});
+
+		if (!UserProfileCache.getUserProfile().getProfile().getMobile()
+				.equalsIgnoreCase(seller.getSellerMobileNo())) {
+			callRL.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					MTAlertUtil.showMessesBox(context, "Phone", "Call "
+							+ seller.getSellerMobileNo() + "?",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent callIntent = new Intent(
+											Intent.ACTION_CALL);
+									callIntent.setData(Uri.parse("tel:91"
+											+ seller.getSellerMobileNo()));
+									startActivityForResult(callIntent,
+											CALL_REQUEST_CODE);
+								}
+							}, new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent intent = new Intent(context,
+											RateUserActivity.class);
+									intent.putExtra("SELLER_INFO", seller);
+									startActivity(intent);
+								}
+							}, "Call", "Don't call");
+
+				}
+			});
+		} else {
+			callIV.setImageResource(R.drawable.phone_icon_white_disabled);
+		}
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 500 && resultCode == RESULT_OK) {
+			Intent intent = new Intent(context, RateUserActivity.class);
+			intent.putExtra("SELLER_INFO", seller);
+			startActivity(intent);
+		}
+	}
+
+	protected void stopPlayback() {
+		if (seekBar != null)
+			seekBar.setProgress(0);
+		if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+			mediaPlayer.pause();
+			// mediaPlayer.reset();
+			// mediaPlayer.release();
+			// mediaPlayer = null;
+		}
+	}
+
+	protected void startPlayback() {
+		seekBar.setIndeterminate(true);
+		seekBar.setProgress(0);
+		mediaPlayer = new MediaPlayer();
+		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		try {
+			mediaPlayer.setDataSource(String.format("%s/v1/%s",
+					MTURLHelper.getAPIEndpointURL(""), audioUrl));
+			mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
+				@Override
+				public void onPrepared(final MediaPlayer mediaPlayer) {
+					seekBar.setIndeterminate(false);
+					mediaPlayer.start();
+					seekBar.setMax(mediaPlayer.getDuration());
+
+					new Thread(new Runnable() {
+
+						@Override
+						public void run() {
+							while (mediaPlayer != null
+									&& mediaPlayer.getCurrentPosition() < mediaPlayer
+											.getDuration()) {
+								Message msg = new Message();
+								int millis = mediaPlayer.getCurrentPosition();
+
+								msg.obj = millis;
+								// mHandler.sendMessage(msg);
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								}
+								if (mediaPlayer != null
+										&& mediaPlayer.isPlaying())
+									seekBar.setProgress(mediaPlayer
+											.getCurrentPosition());
+							}
+						}
+
+						// Handler mHandler = new Handler();
+
+					}).start();
+
+				}
+			});
+			mediaPlayer.setOnErrorListener(new OnErrorListener() {
+
+				@Override
+				public boolean onError(MediaPlayer mediaPlayer, int what,
+						int extra) {
+					System.out.println("@#@#@#@@#@#@# " + what);
+					return false;
+				}
+			});
+			mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+				@Override
+				public void onCompletion(MediaPlayer mp) {
+					playPause.setChecked(false);
+				}
+			});
+			mediaPlayer.prepareAsync();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void initComponents() {
+		viewPager = (ViewPager) findViewById(R.id.view_pager);
+		indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+		playPause = (ToggleButton) findViewById(R.id.play_pause);
+		seekBar = (SeekBar) findViewById(R.id.seek_bar);
+		sellerName = (TextView) findViewById(R.id.seller_name);
+		verified = (ImageView) findViewById(R.id.verified);
+		ratingBar = (RatingBar) findViewById(R.id.rating_bar);
+		memberSince = (TextView) findViewById(R.id.member_since);
+		defaultImage = (SmartImageView) findViewById(R.id.default_image);
+		quantity = (TextView) findViewById(R.id.quantity);
+		pricePerKg = (TextView) findViewById(R.id.price_per_kg);
+		variety = (TextView) findViewById(R.id.variety);
+		videoView = (VideoView) findViewById(R.id.video_view);
+		noVideoIV = (ImageView) findViewById(R.id.no_video_iv);
+		noAudioIV = (RelativeLayout) findViewById(R.id.no_audio_iv);
+		sellerAddress = (TextView) findViewById(R.id.seller_address);
+		distance = (TextView) findViewById(R.id.distance);
+		noOfCalls = (TextView) findViewById(R.id.no_of_calls);
+		tabBtnImage = (Button) findViewById(R.id.tab_button_image);
+		tabBtnVideo = (Button) findViewById(R.id.tab_button_video);
+		tabBtnAudio = (Button) findViewById(R.id.tab_button_audio);
+		mediaLL = (LinearLayout) findViewById(R.id.media_ll);
+		toggleLL = (LinearLayout) findViewById(R.id.toggle_ll);
+		videoLL = (LinearLayout) findViewById(R.id.video_ll);
+		imageLL = (LinearLayout) findViewById(R.id.images_ll);
+		audioLL = (LinearLayout) findViewById(R.id.audio_bar_ll);
+		postedOnTV = (TextView) findViewById(R.id.posted_on);
+		mediaController = new MediaController(context);
+		callIV = (ImageView) findViewById(R.id.call_iv);
+
+		directionRL = (RelativeLayout) findViewById(R.id.directionRL);
+		updateWishlistRL = (RelativeLayout) findViewById(R.id.update_wishlist_rl);
+		callRL = (RelativeLayout) findViewById(R.id.call_rl);
+		updateWishlistIV = (ImageView) findViewById(R.id.update_wishlist_iv);
+		interestedUserRL = (RelativeLayout) findViewById(R.id.interested_user_rl);
+
+		reportPost = (TextView) findViewById(R.id.report_post_tv);
+
+		if (source != null && source.equals("WishlistFragment")) {
+			updateWishlistIV.setImageResource(R.drawable.remove_icon);
+		}
+	}
+
+	private void setSellerInfo() {
+
+		seller = (MTSeller) getIntent().getExtras().getSerializable(
+				"SELLER_INFO");
+
+		String postedOn = MTFormatter
+				.formatDateString(MTFormatter.getDateFromString(seller.getDOC()
+						.getDate()), false);
+
+		postedOnTV.setText("Posted on " + postedOn);
+
+		sellerName.setText(seller.getSellerName());
+		// if (seller.getTag().equalsIgnoreCase("certified"))
+		verified.setVisibility(View.VISIBLE);
+		// else
+		// verified.setVisibility(View.GONE);
+		ratingBar
+				.setRating(Float.parseFloat(seller.getRating() != null ? seller
+						.getRating() : "0.0"));
+		memberSince.setText(MTFormatter.formatDateMMDDYYYY(MTFormatter
+				.getDateFromString(seller.getMemberSince())));
+
+		String image_url = CommoditiesCache.getCommoditiesCache()
+				.getCommodityUrl(
+						seller.getSellerCommodity() + "_"
+								+ seller.getSellerVariety());
+		defaultImage.setImageUrl(image_url);
+
+		quantity.setText(seller.getSellerQuantity() + " kg available");
+		pricePerKg.setText(seller.getSellerPrice() + " per kg");
+		variety.setText(seller.getSellerVariety());
+		sellerAddress.setText(seller.getSellerAddress());
+
+		distance.setText(MTUtil.computeDistance(seller.getLatLang()[0],
+				seller.getLatLang()[1]));
+
+		int callNumber = seller.getNoOfCalls() != null ? seller.getNoOfCalls()
+				.size() : 0;
+		noOfCalls.setText("(" + callNumber + ")");
+
+		viewPager.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View view, MotionEvent event) {
+				view.getParent().requestDisallowInterceptTouchEvent(true);
+				return false;
+			}
+		});
+
+		viewPager.setOnPageChangeListener(new OnPageChangeListener() {
+
+			@Override
+			public void onPageSelected(int arg0) {
+
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+				viewPager.getParent().requestDisallowInterceptTouchEvent(true);
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+
+			}
+		});
+
+	}
+
+	public Bitmap getStringToBitMap(String encodedString) {
+		try {
+			byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+			Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0,
+					encodeByte.length);
+			return bitmap;
+		} catch (Exception e) {
+			e.getMessage();
+			return null;
+		}
+	}
+
+	@Override
+	public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
+		// mediaPlayer.seekTo(progress);
+		// seekBar.setProgress(progress);
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar bar) {
+
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar bar) {
+
+	}
+
+	public void sendEmail(String[] to, String[] cc, String subject,
+			String message) {
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+		emailIntent.setData(Uri.parse("mailto:"));
+		emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+		emailIntent.putExtra(Intent.EXTRA_CC, cc);
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+		emailIntent.setType("message/rfc822");
+		startActivity(Intent.createChooser(emailIntent, "Email"));
+	}
+
+}
+
+class MTSellerComparator implements Comparator<MTSeller> {
+
+	@Override
+	public int compare(MTSeller s1, MTSeller s2) {
+		if (s1.getSellerId().getId().equals(s2.getSellerId().getId())) {
+			return 0;
+		} else {
+			return -1;
+		}
+	}
+
+}

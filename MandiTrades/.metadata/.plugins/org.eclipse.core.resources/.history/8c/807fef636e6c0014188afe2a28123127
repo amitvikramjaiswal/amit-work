@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="project_number">1034650838814</string>
+    <string name="clear_screen">Clear Screen</string>
+    <string name="first_launch">First Launch</string>
+    <string name="num_of_missed_messages">MissedMessageCount</string>
+    <string name="lines_of_message_count">LinesOfMessageCount</string>
+    <string name="preferences">PreferencesFile</string>
+    <string name="notification_number">1337</string>
+
+    <string-array name="option_array">
+        <item>Market</item>
+        <item>Commodity</item>
+    </string-array>
+
+    <string name="app_name">Mandi Trades</string>
+    <string name="action_settings">Settings</string>
+    <string name="drawer_open">Slider Menu Opened</string>
+    <string name="drawer_close">Slider Menu Closed</string>
+    <string name="search_hint">Search</string>
+
+    <!-- Commodity Category -->
+    <string name="fruits">Fruits</string>
+    <string name="vegetables">Vegetables</string>
+    <string name="cereals">Cereals</string>
+    <string name="pulses">Pulses</string>
+    <string name="spices">Spices</string>
+
+    <!-- Nav Slider Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item></item>
+        <item>English</item>
+        <item>My Wishlist</item>
+        <item>Subscriptions</item>
+        <item>Settings</item>
+        <item>Help</item>
+        <item>Rate The App</item>
+        <item>Share The App</item>
+        <item>Logout</item>
+        <item>Delete Account</item>
+    </string-array>
+
+    <!-- Nav Drawer List Item Icons -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/user</item>
+        <item>@drawable/language</item>
+        <item>@drawable/heart</item>
+        <item>@drawable/subscribe</item>
+        <item>@drawable/setting</item>
+        <item>@drawable/help</item>
+        <item>@drawable/fav_256x256_32</item>
+        <item>@drawable/share_app_icon</item>
+        <item>@drawable/logout</item>
+        <item>@drawable/delete_icon</item>
+    </array>
+
+    <!-- Actionsheet Menu Items -->
+    <string-array name="actionsheet_items">
+        <item>English</item>
+        <item>Hindi</item>
+        <item>Tamil</item>
+        <item>Telegu</item>
+        <item>Kannada</item>
+        <item>Malyalam</item>
+    </string-array>
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="blank"></string>
+    <string name="slide_to_cancel">Slide To Cancel</string>
+    <string name="press_and_hold_to_record">Press and hold to record</string>
+    <string name="enter_mobile_number">Enter Mobile Number*</string>
+    <string name="submit">Submit</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="enter_otp">Please enter OTP sent by SMS</string>
+    <string name="otp">OTP</string>
+    <string name="skip">Skip</string>
+    <string name="username">Username</string>
+    <string name="change_state">Change State</string>
+    <string name="select_state">Select State</string>
+    <string name="notice">Commodity prices loaded from data.gov.in. Quantity in Quintals. Comments/Feedback Email: ceo@farmobi.in</string>
+    <string name="govt_analysis_of_feedback">Govt. Analysis of Feedback</string>
+    <string name="rate_user">Rate User !</string>
+    <string name="create_alert">Create Alert</string>
+    <string name="type_your_feedback">Type your feedback</string>
+    <string name="govt_feedback_analysis_text1">By Introducing the Guaranteed Loan Program the suicide rate of farmers has fallen from an average of 11.2 % to 6.8%</string>
+    <string name="govt_feedback_analysis_text2">By Introducting Sustainable Agriculture Reasearch and Eductaion Program (SARE) number of farmers grew by 12% and productivity increased from 145 lakh tonnes to 180 lakh tonnes.</string>
+    <string name="back">Back</string>
+    <string name="call_us">Call Us</string>
+    <string name="email_us">Email Us</string>
+    <string name="faq_text">
+<![CDATA[
+<html>
+ <head></head>
+ <body >
+ 
+
+<h4>Why do we need this?</h4>
+<p>Biggest problem for farmers is marketing – as they are not able to sell their produce in timely manner. There is no accurate data available with even government on what is farmer growing in fields as it changes often with season. So we get to know about availability only AFTER farmer harvests and gets it to a mandi (auction place or wholesale market). Farmers deal mostly through agents and middlemen. They are not aware of other bulk buyers like hotels, caterers, exporters, food processors, retail supermarkets etc., when a farmer registers in Mandi Trades, we capture all his produce details and location of Produce. Buyers can get all details and contact farmer directly through smart phone.</p>
+
+<h4>How does one use this App?</h4>
+<p>Some typical queries which one can get answers from the portal: For farmer: List Agriculture Commodity details on the Mobile Phone. For buyers: Who are the farmers growing a particular produce or variety. Narrow down by geography, location, price, availability, yield and various advanced parameters</p>
+
+<h4>How will this benefit farmers?</h4>
+<p>Farmers have more choice of buyers, who are now buying in bulk from mandi can deal directly as volumes will be higher and rates also better than mandi rates. Reduce ‘last minute’ rush sale, and negotiating well ahead. Get to know average demand, peak/low demand season, in-season and off-season needs by querying the data and can plan their farms. Get to know more precise demand data and rare items, and can grow them to get higher prices. In short – More buyers, better prices for farmers and less wastage.</p>
+
+
+<h4>What if buyer refuses to pay or cancels transaction without notice?</h4>
+<p>Farmer and Buyer are directly responsible for their decisions and Mandi Trades will NOT take responsibility for bad deals.</p>
+
+
+<h4>Who will fit in a buyer category?</h4>
+<p>The Mobile App / Web Portal is targeted at B2B, bulk buyers only. Primary buyer segment who would benefit are: Hotels and caterers, Retail supermarkets, Local neighbourhood traders, Food processors, Exporters.</p>
+
+
+<h4>What are the key problems from buyer’s side which the App would address?</h4>
+<p>Most buyers buy from agents or Mandi / wholesale market. The App addresses the problems of High price fluctuation, poor quality control, no value addition agents etc. App provides a level playing field to everyone who is interested to buy a farm produce</p>
+
+
+<h4>How will the App benefit buyers?</h4>
+<p>Search and locate farmers and aggregators easily using internet/mobile. Plan procurement well in advance as harvest information is available for future. Direct dealing and visiting farms prior to purchase enables better backward integration and quality·</p>
+
+ </body>
+</html>
+]]>
+    </string>
+    <string name="termsconditions">
+<![CDATA[
+<html>
+ <head></head>
+ <body ><p style="text-align:justify;">
+        This Application End User License Agreement (“License”) is an agreement between you and 
+
+Farmobi Technologies Pvt Ltd., its subsidiaries or affiliates. This License governs your use of 
+
+the application and any and all related documentation, and updates and upgrades that replace or 
+
+supplement the application in any respect and which are not distributed with a separate license 
+
+(collectively, the "Application"). This Application is licensed to you, not sold. </p>
+
+<p style="text-align:justify;">
+
+BY INSTALLING OR USING THE APPLICATION, YOU AGREE TO THE TERMS OF: 
+
+(1) THIS LICENSE; (2) TERMS OF SERVICE; (3) PRIVACY POLICY AND AGREE TO 
+
+BE BOUND BY THEM. If you do not agree to the terms of this License, Terms of Service and
+
+Privacy Policy then do not install or use the Application.
+</p>
+
+<p style="text-align:justify;">
+
+The Terms of Service and Privacy policy are agreements that will be added on subsequent to 
+
+the acceptance of this License agreement. We reserve the right to modify the Terms of Service 
+
+and the Privacy Policy at any time, so please review by visiting http://www.manditrades.com/
+
+privacy.html & http://www.manditrades.com/tos.html . Your continued use of our online and 
+
+mobile products and services will signify your acceptance of the changes.
+
+</p>
+
+<p style="text-align:justify;">
+
+We reserve the right to modify this License at any time, so please review it frequently or by 
+
+visiting http://www.manditrades.com/eula.html your continued use of our online and mobile 
+
+products and services will signify your acceptance of the changes to this License.
+
+</p>
+
+<p style="text-align:justify;">
+<b>1.    Limited License Grant and Terms of Use.</b> 
+<br> <b>A. Grant.</b> Through this purchase, you are acquiring and Farmobi Technologies Pvt Ltd.,
+
+grants you a personal, limited, non-exclusive license to install and use the Application for 
+
+your personal use on a single, authorized mobile device solely as set forth in this License. 
+
+Your acquired rights are subject to your compliance with this License. You are expressly 
+
+prohibited from sub-licensing, renting, leasing, transferring or otherwise distributing the 
+
+Application or rights to use the Application. The term of your License shall commence 
+
+on the date that you install or otherwise use the Application, and shall end on the 
+
+earlier of the date that you dispose of the Application; or on Farmobi Technologies Pvt 
+
+Ltd., termination of this License. Further, your rights under this license will terminate 
+
+automatically without notice from Farmobi Technologies Pvt Ltd., if you fail to comply 
+
+with any term(s) of this license. Upon termination of the license, you shall cease all use 
+
+of the Application, and destroy all copies, full or partial, of the Application. </p>
+
+
+<p style="text-align:justify;">
+<b>B. Access to Online Features and/or services.</b> A user account may be required to access
+
+online services and/or features. You must be at least 18 or older to register for a user 
+
+account and to avail all services of the Application.</p> 
+
+
+
+<p style="text-align:justify;">
+<b>C. Further  Restrictions.</b> Your right to use the Application is limited to the license grant
+
+above, and you may not otherwise copy, display, seek to disable, distribute, perform, 
+
+publish, modify, transfer, create works from, or use the Application or any component of 
+
+it, except as expressly authorized by Farmobi Technologies Pvt Ltd., Unless expressly 
+
+authorized, you are prohibited from making a copy of the Application available on a 
+
+network where it could be used by multiple users. You are prohibited from making the 
+
+Application available over a network where multiple users could download it. You may 
+
+not remove or alter trademarks or logos, or legal notices included in the Application or 
+
+related assets. Your right to use the Application is also predicated on your compliance 
+
+with any applicable terms of agreements you have with third parties when using the 
+
+Application. For instance if the Application is a VoIP application, then you must not be 
+
+in violation of your wireless data service agreement when using the Application, this will 
+
+apply to any and all applicable terms of agreements you have with third parties when 
+
+using the Application.</p> 
+
+<p style="text-align:justify;">
+<b>D.Services, Third  Party  Content:</b>  The Licensed Application may enable access 
+
+to the Application and third party services and content (collectively and 
+
+individually, "Services"). Use of the Services may require Internet access and that 
+
+you accept additional terms of service. You understand that by using the Application
+
+you may encounter content that may be deemed offensive, indecent, or objectionable. 
+
+Nevertheless, you agree to use the Services at your sole risk and that Farmobi 
+
+Technologies Pvt Ltd., shall not have any liability to you for content that may be 
+
+found to be offensive, indecent, or objectionable. Location data provided by the 
+
+App is for basic navigational purposes only and is not intended to be relied upon in 
+
+situations where precise location based information is needed or where erroneous, 
+
+inaccurate or incomplete location data may lead to death, personal injury, property or 
+
+environmental damage. Neither Farmobi Technologies Pvt Ltd., nor any of its content 
+
+providers, guarantees the availability, accuracy, completeness, reliability or timeliness of 
+
+information or location data displayed.</p>
+
+<p style="text-align:justify;">
+<b>E. Reservation  of  Rights.</b> You have obtained a license to the Application and your 
+
+rights are subject to this License. Except as expressly licensed to you herein, Farmobi 
+
+Technologies Pvt Ltd., reserves all right, title and interest in the Application (including 
+
+all characters, page navigation and design, images, photographs, animations, video, 
+
+music, text), and all associated copyrights, trademarks, and other intellectual property 
+
+rights therein. This License is limited to the intellectual property rights of Farmobi 
+
+Technologies Pvt Ltd., and its licensors in the Application and does not include any rights 
+
+to other patents or intellectual property. Except to the extent permitted under applicable 
+
+law, you may not decompile, disassemble, or reverse engineer the Application, or any 
+
+component thereof, or attempt to derive the source code, modify or create derivative 
+
+works of the Application, any updates or parts thereof, by any means whatsoever. 
+
+You may not remove, alter, or obscure any product identification, copyright, or other 
+
+intellectual property notices in the Application. All rights not expressly granted herein 
+
+are reserved by Farmobi Technologies Pvt Ltd.
+</p>
+
+F. Your  Contributions. In exchange for use of the Application, and to the extent that
+
+your contributions through use of the Application give rise to any copyright interest, you 
+
+hereby grant Farmobi Technologies Pvt Ltd. an exclusive, perpetual, irrevocable, fully 
+
+transferable and sub-licensable worldwide right and license to use your contributions 
+
+in any way and for any purpose in connection with the Application and related goods 
+
+and services including the rights to reproduce, copy, adapt, modify, perform, display, 
+
+publish, broadcast, transmit, or otherwise communicate to the public by any means 
+
+whether now known or unknown and distribute your contributions without any further 
+
+notice or compensation to you of any kind for the whole duration of protection granted 
+
+to intellectual property rights by applicable laws and international conventions. You 
+
+hereby waive any moral rights of paternity, publication, reputation, or attribution with 
+
+respect to Farmobi Technologies Pvt Ltd.’s and other users’ use and enjoyment of such 
+
+assets in connection with the Application and related goods and services under applicable 
+
+law. The license grant to Farmobi Technologies Pvt Ltd., and the above waiver of any 
+
+applicable moral rights, survives any termination of this License.
+
+<br>
+<p style="text-align:justify;">
+<i>
+NO WARRANTY: YOU EXPRESSLY ACKNOWLEDGE AND AGREE THAT USE OF THE LICENSED APPLICATION IS AT YOUR SOLE RISK AND THAT THE ENTIRE RISK AS TO SATISFACTORY QUALITY, PERFORMANCE, ACCURACY AND EFFORT IS WITH YOU. TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE LICENSED APPLICATION AND ANY SERVICES PERFORMED OR PROVIDED BY THE LICENSED APPLICATION ("SERVICES") ARE PROVIDED "AS IS" AND “AS AVAILABLE”, WITH ALL FAULTS AND WITHOUT WARRANTY OF ANY KIND, AND MANDI TRADES HEREBY DISCLAIMS ALL WARRANTIES AND CONDITIONS WITH RESPECT TO THE LICENSED APPLICATION AND ANY SERVICES, EITHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES AND/OR CONDITIONS OF MERCHANTABILITY, OF SATISFACTORY QUALITY, OF FITNESS FOR A PARTICULAR PURPOSE, OF ACCURACY, OF QUIET ENJOYMENT, AND NON-INFRINGEMENT OF THIRD PARTY RIGHTS. 
+</i>
+</p>
+<p style="text-align:justify;">
+<i>
+Limitation of Liability: TO THE EXTENT NOT PROHIBITED BY LAW, IN NO EVENT SHALL MANDI TRADES BE LIABLE FOR PERSONAL INJURY, OR ANY INCIDENTAL, SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES WHATSOEVER, INCLUDING, WITHOUT LIMITATION, DAMAGES FOR LOSS OF PROFITS, LOSS OF DATA, BUSINESS INTERRUPTION OR ANY OTHER COMMERCIAL DAMAGES OR LOSSES, ARISING OUT OF OR RELATED TO YOUR USE OR INABILITY TO USE THE LICENSED APPLICATION, HOWEVER CAUSED, REGARDLESS OF THE THEORY OF LIABILITY (CONTRACT, TORT OR OTHERWISE) AND EVEN IF MANDI TRADES HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+ </i>
+ </p>
+ </body>
+</html>
+]]>
+    </string>
+
+    <string-array name="schemes_title_array">
+        <item>Guaranteed Loan Program</item>
+        <item>Chief Minister Solar Powered Green House Scheme (CMSPGHS)</item>
+        <item>Sustainable Agriculture Research and Education Program (SARE)</item>
+        <item>Indira Jeevitha Bima Pathakam</item>
+        <item>Andhra Pradesh Social Security Pensions (APSSP)</item>
+        <item>Swarnajayanthi Gram Swarozgar Yojana (SGSY)</item>
+        <item>Yeshasvini Cooperative Farmers Health Care</item>
+        <item>Interest subsidy for crop loans</item>
+        <item>Tribal Sub Plan – Marketing Infrastructure facilities to LAMPS Federation:</item>
+    </string-array>
+    <string-array name="schemes_array">
+        <item>The Farm Service Agency (FSA) provides Guaranteed Farm Ownership and Operating Loans for farmers and ranchers to work with banks, credit unions or other lenders to make loans with an FSA guarantee against significant loss of principal or interest.</item>
+        <item>This Government will launch a Solar Powered Green House Scheme for the benefit of the poor in the rural areas and construct houses measuring about 300 square feet at a unit cost of Rs.1.80 lakh by meeting the entire cost by the State  Government.</item>
+        <item>Help farmers with Sustainable Agri research and induce technology . Work on educating the farmers on latest / most efficient and effective farming methods.</item>
+        <item>AABY a Group Insurance Scheme for the benefit of Rural Landless Agricultural Labourers through Life Insurance Corporation of India.</item>
+        <item>The Government of Andhra Pradesh is implementing various pension schemes for most needy and vulnerable people i.e the persons in old age , widows, people with disabilities and weavers to provide them succour.</item>
+        <item>Swarnajayanthi Gram Sswarozgar Yojana Scheme is a holistic approach towards poverty eradication in rural India through creation of self-employment opportunities to the rural Swarozgaries.</item>
+        <item>To provide quality health care and improve the living standards of rural cooperative members, thereby ensuring overall health and welfare of the co-operative members.</item>
+        <item>Reduction in the rate of interest on agricultural loans up to Rs.3/- lakh to 0% and a firm commitment by the Govt. to provide interest subsidy on the loans sanctioned by the co-operative credit institutions.  This will  Strengthen the credit delivery system to the farmers and make available easy credit at reasonable rates.</item>
+        <item>Under this scheme, financial assistance is being given to Karnataka State Cooperative LAMPS Federation and member LAMPS societies for providing marketing infrastructures like Computers, FAX and Telephone etc. and also for construction of godowns /building. Members of LAMP societies will get market for their minor forest produce and thereby they are economically benefited.</item>
+    </string-array>
+
+    <string name="rate">Rate</string>
+    <string name="exit">Exit</string>
+    <string name="next">Next</string>
+    <string name="select_language">Select Language</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="profile_settings">Profile Settings</string>
+    <string name="commodity_settings">Commodity Settings</string>
+    <string name="report_post">Report Post</string>
+    <string name="hold_to_record_release_to_save">Hold to record, release to save</string>
+
+</resources>
