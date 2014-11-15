@@ -88,7 +88,7 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/TextView01"
+                    android:id="@+id/create_alert_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -115,6 +115,7 @@
                         android:background="@drawable/viewalerts" />
 
                     <TextView
+                        android:id="@+id/price_notify_tv"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_alignParentRight="true"
@@ -161,15 +162,16 @@
                         android:background="@drawable/news_icon" />
 
                     <TextView
+                        android:id="@+id/news_notify_tv"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
                         android:background="@drawable/round_shape_red"
                         android:gravity="center"
-                        android:text="28"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/text_size_notify" />
+                        android:textSize="@dimen/text_size_notify"
+                        android:visibility="gone" />
                 </RelativeLayout>
 
                 <TextView
@@ -182,28 +184,30 @@
                     android:textSize="@dimen/text_size_large" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="@dimen/width_main_menu_ll"
-                android:layout_height="@dimen/height_main_menu_ll"
-                android:orientation="vertical"
-                android:visibility="gone" >
+            <!-- <LinearLayout -->
+            <!-- android:layout_width="@dimen/width_main_menu_ll" -->
+            <!-- android:layout_height="@dimen/height_main_menu_ll" -->
+            <!-- android:orientation="vertical" -->
+            <!-- android:visibility="gone" > -->
 
-                <Button
-                    android:id="@+id/govt_feedback_btn"
-                    android:layout_width="@dimen/size_main_menu_icon"
-                    android:layout_height="@dimen/size_main_menu_icon"
-                    android:layout_gravity="center"
-                    android:background="@drawable/feedback_icon" />
 
-                <TextView
-                    android:id="@+id/govt_feedback_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:text="Govt. Feedback"
-                    android:textSize="@dimen/text_size_large" />
-            </LinearLayout>
+            <!-- <Button -->
+            <!-- android:id="@+id/govt_feedback_btn" -->
+            <!-- android:layout_width="@dimen/size_main_menu_icon" -->
+            <!-- android:layout_height="@dimen/size_main_menu_icon" -->
+            <!-- android:layout_gravity="center" -->
+            <!-- android:background="@drawable/feedback_icon" /> -->
+
+
+            <!-- <TextView -->
+            <!-- android:id="@+id/govt_feedback_tv" -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:gravity="center" -->
+            <!-- android:padding="5dp" -->
+            <!-- android:text="Govt. Feedback" -->
+            <!-- android:textSize="@dimen/text_size_large" /> -->
+            <!-- </LinearLayout> -->
 
             <LinearLayout
                 android:layout_width="@dimen/width_main_menu_ll"

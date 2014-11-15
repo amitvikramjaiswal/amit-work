@@ -1,6 +1,7 @@
 package com.manditrades.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,7 +18,9 @@ import android.widget.ListView;
 import com.manditrades.R;
 import com.manditrades.activities.FAQActivity;
 import com.manditrades.activities.FeedbackSuggestionsActivity;
+import com.manditrades.activities.RateUserActivity;
 import com.manditrades.adapters.SimpleListAdapter;
+import com.manditrades.util.MTAlertUtil;
 
 public class HelpFragment extends Fragment {
 	private Context context;
@@ -43,9 +46,28 @@ public class HelpFragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				Intent callIntent = new Intent(Intent.ACTION_CALL);
-				callIntent.setData(Uri.parse("tel:918040945125"));
-				startActivity(callIntent);
+
+				MTAlertUtil.showMessesBox(context, "Phone",
+						"Call +918040945125 ?",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Intent callIntent = new Intent(
+										Intent.ACTION_CALL);
+								callIntent.setData(Uri
+										.parse("tel:+918040945125"));
+								startActivity(callIntent);
+							}
+						}, new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+							}
+						}, "Call", "Don't call");
+
 			}
 		});
 
@@ -54,9 +76,9 @@ public class HelpFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 
-				String[] to = { "manditrades@appface.in" };
+				String[] to = { "ceo@farmobi.in" };
 				String[] cc = { "" };
-				sendEmail(to, cc, "Mandi Trades Feedback/Help", "");
+				sendEmail(to, cc, "Enquiry from Mandi Trades Mobile App", "");
 
 			}
 
@@ -69,31 +91,21 @@ public class HelpFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				
-				
-				
 
 				switch (arg2) {
-				
-				
-		
 
 				case 0:
 					intent = new Intent(context, FAQActivity.class);
 					startActivity(intent);
-					 
+
 					break;
 				case 1:
-					intent = new Intent(context, FeedbackSuggestionsActivity.class);
+					intent = new Intent(context,
+							FeedbackSuggestionsActivity.class);
 					startActivity(intent);
 					break;
-					
-				
 
 				}
-				
-				
-				
 
 			}
 		});

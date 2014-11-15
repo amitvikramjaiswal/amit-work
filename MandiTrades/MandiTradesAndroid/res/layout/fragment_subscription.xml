@@ -1,14 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="#fff"
+    android:orientation="vertical"
+    android:padding="@dimen/padding_normal" >
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:text="Coming Soon"
-        android:textSize="25dp" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/TextView05"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Basic Subscription"
+                android:textSize="@dimen/text_size_large" />
+
+            <TextView
+                android:id="@+id/TextView06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Limited price alerts and seller contacts."
+                android:textColor="#bdbdbd"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+
+        <ToggleButton
+            android:id="@+id/basic_subscription_toggle"
+            android:layout_width="52dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ios_switch"
+            android:checked="true"
+            android:textOff=""
+            android:textOn="" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/padding_normal"
+        android:layout_marginTop="@dimen/padding_normal"
+        android:background="#bdbdbd" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/TextView03"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Price Alert Package"
+                android:textSize="@dimen/text_size_large" />
+
+            <TextView
+                android:id="@+id/TextView04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unlimited price alerts."
+                android:textColor="#bdbdbd"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+
+        <ToggleButton
+            android:id="@+id/price_alert_package_toggle"
+            android:layout_width="52dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ios_switch"
+            android:checked="true"
+            android:textOff=""
+            android:textOn="" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/padding_normal"
+        android:layout_marginTop="@dimen/padding_normal"
+        android:background="#bdbdbd" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contact Seller Package"
+                android:textSize="@dimen/text_size_large" />
+
+            <TextView
+                android:id="@+id/TextView02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unlimited seller contacts."
+                android:textColor="#bdbdbd"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+
+        <ToggleButton
+            android:id="@+id/contact_seller_pkg_toggle"
+            android:layout_width="52dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ios_switch"
+            android:checked="true"
+            android:textOff=""
+            android:textOn="" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/padding_normal"
+        android:layout_marginTop="@dimen/padding_normal"
+        android:background="#bdbdbd" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/textView0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seller Boost Package"
+                android:textSize="@dimen/text_size_large" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Unlimited boosting of seller listing."
+                android:textColor="#bdbdbd"
+                android:textSize="@dimen/text_size_normal" />
+        </LinearLayout>
+
+        <ToggleButton
+            android:id="@+id/seller_boost_pkg_toggle"
+            android:layout_width="52dp"
+            android:layout_height="32dp"
+            android:background="@drawable/ios_switch"
+            android:checked="true"
+            android:textOff=""
+            android:textOn="" />
+    </LinearLayout>
+
+</LinearLayout>

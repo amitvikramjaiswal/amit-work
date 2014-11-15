@@ -51,7 +51,7 @@ public class MandiNewsActivity extends Activity {
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
 		params.add(new BasicNameValuePair("from", "1"));
-		params.add(new BasicNameValuePair("to", "10"));
+		params.add(new BasicNameValuePair("to", "100"));
 
 		Object[] object = { url, method, params, null };
 

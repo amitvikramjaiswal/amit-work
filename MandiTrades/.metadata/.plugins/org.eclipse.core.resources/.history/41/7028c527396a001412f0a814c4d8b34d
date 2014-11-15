@@ -1,0 +1,388 @@
+package com.manditrades.adapters;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+import com.loopj.android.image.SmartImageView;
+import com.manditrades.R;
+import com.manditrades.activities.InterestedUserActivity;
+import com.manditrades.activities.RateUserActivity;
+import com.manditrades.cache.CommoditiesCache;
+import com.manditrades.cache.UserProfileCache;
+import com.manditrades.jsonwrapper.MTSeller;
+import com.manditrades.jsonwrapper.MTSellerList;
+import com.manditrades.util.GPSTracker;
+import com.manditrades.util.MTAlertUtil;
+import com.manditrades.util.MTFormatter;
+import com.manditrades.util.MTUtil;
+
+public class SellersListAdapter extends BaseAdapter {
+
+	private Context context;
+	private ArrayList<MTSeller> mtSellerList;
+	private RelativeLayout directionRL;
+	private SmartImageView commodityImage;
+	private ImageView tagImage;
+	private RelativeLayout callNumberRL;
+	private TextView sellerName;
+	private TextView variety;
+	private TextView postedOnTV;
+	private TextView available;
+	private TextView price;
+	private TextView distance;
+	private TextView favorite;
+	private TextView ratedBy;
+	private RatingBar ratingbar;
+	private String name;
+	private RelativeLayout user_interested_rl;
+	private ImageView updateInWishlistIV;
+	private RelativeLayout updateInWishlistRL;
+
+	private String source;
+	private ArrayList<MTSeller> wishList;
+
+	AlertDialog.Builder alert;
+
+	public SellersListAdapter(Context context,
+			ArrayList<MTSeller> mtSellerList, String source) {
+		this.context = context;
+		this.mtSellerList = mtSellerList;
+		this.source = source;
+	}
+
+	@Override
+	public int getCount() {
+		return mtSellerList.size();
+	}
+
+	@Override
+	public Object getItem(int position) {
+		return mtSellerList.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
+	}
+
+	@SuppressLint("UseValueOf")
+	@Override
+	public View getView(final int position, View convertView, ViewGroup parent) {
+
+		if (convertView == null) {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.sellers_list_template,
+					null);
+		}
+
+		commodityImage = (SmartImageView) convertView.findViewById(R.id.iv1);
+		tagImage = (ImageView) convertView.findViewById(R.id.iv2);
+		sellerName = (TextView) convertView.findViewById(R.id.tv2);
+		variety = (TextView) convertView.findViewById(R.id.tv1);
+		postedOnTV = (TextView) convertView.findViewById(R.id.posted_on);
+		available = (TextView) convertView.findViewById(R.id.tv4);
+		price = (TextView) convertView.findViewById(R.id.tv5);
+		distance = (TextView) convertView.findViewById(R.id.distance);
+		favorite = (TextView) convertView.findViewById(R.id.no_of_calls);
+		ratedBy = (TextView) convertView.findViewById(R.id.rated_by_tv);
+		ratingbar = (RatingBar) convertView.findViewById(R.id.rb1);
+		callNumberRL = (RelativeLayout) convertView.findViewById(R.id.call);
+		directionRL = (RelativeLayout) convertView.findViewById(R.id.direction);
+		updateInWishlistIV = (ImageView) convertView
+				.findViewById(R.id.update_in_wishlist_image);
+		updateInWishlistRL = (RelativeLayout) convertView
+				.findViewById(R.id.update_in_wishlist);
+
+		user_interested_rl = (RelativeLayout) convertView
+				.findViewById(R.id.interested_user_rl);
+
+		if (source.equalsIgnoreCase("WishlistFragment")) {
+			updateInWishlistIV.setImageResource(R.drawable.remove_icon);
+		}
+
+		String image_url = CommoditiesCache
+				.getCommoditiesCache()
+				.getCommodityUrl(
+						mtSellerList.get(position).getSellerCommodity() + "_"
+								+ mtSellerList.get(position).getSellerVariety());
+
+		commodityImage.setImageUrl(image_url);
+
+		sellerName.setText(mtSellerList.get(position).getSellerName());
+
+		variety.setText("Variety : "
+				+ mtSellerList.get(position).getSellerVariety());
+
+		String date = MTFormatter.getFormattedPostDate(mtSellerList
+				.get(position).getDOC().getDate());
+
+		postedOnTV.setText(date);
+
+		available.setText(mtSellerList.get(position).getSellerQuantity()
+				+ "Kg available");
+
+		price.setText(mtSellerList.get(position).getSellerPrice() + " per kg");
+
+		ratedBy.setText("(" + mtSellerList.get(position).getRatedBy() + ")");
+
+		try {
+			ratingbar.setRating(Float.parseFloat(mtSellerList.get(position)
+					.getRating() != "" ? mtSellerList.get(position).getRating()
+					: "0"));
+		} catch (Exception exception) {
+			System.out.println(position);
+			System.out.println("rating -------- "
+					+ mtSellerList.get(position).getRating());
+		}
+
+		int no = mtSellerList.get(position).getNoOfCalls() != null ? mtSellerList
+				.get(position).getNoOfCalls().size()
+				: 0;
+		favorite.setText("(" + no + ")");
+
+		// String tag = mtSellerList.get(position).getTag();
+		// if (tag != null && tag.equalsIgnoreCase("certified")) {
+		tagImage.setVisibility(View.VISIBLE);
+		// } else {
+		// tagImage.setVisibility(View.GONE);
+		// }
+
+		distance.setText(MTUtil.computeDistance(mtSellerList.get(position)
+				.getLatLang()[0], mtSellerList.get(position).getLatLang()[1]));
+
+		alert = new AlertDialog.Builder(context);
+		alert.setPositiveButton("Cancel",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				});
+		alert.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+
+		if (!mtSellerList
+				.get(position)
+				.getSellerMobileNo()
+				.equalsIgnoreCase(
+						UserProfileCache.getUserProfile().getProfile()
+								.getMobile())) {
+			callNumberRL.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+
+					MTAlertUtil.showMessesBox(context, "Phone", "Call "
+							+ mtSellerList.get(position).getSellerMobileNo()
+							+ "?", new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent callIntent = new Intent(Intent.ACTION_CALL);
+							callIntent.setData(Uri.parse("tel:91"
+									+ mtSellerList.get(position)
+											.getSellerMobileNo()));
+							context.startActivity(callIntent);
+
+							Intent intent = new Intent(context,
+									RateUserActivity.class);
+							intent.putExtra("SELLER_INFO",
+									mtSellerList.get(position));
+							context.startActivity(intent);
+						}
+					}, new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent intent = new Intent(context,
+									RateUserActivity.class);
+							intent.putExtra("SELLER_INFO",
+									mtSellerList.get(position));
+							context.startActivity(intent);
+						}
+					}, "Call", "Don't call");
+
+				}
+			});
+		}
+
+		user_interested_rl.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				if (mtSellerList.get(position).getNoOfCalls() != null
+						&& mtSellerList.get(position).getNoOfCalls().size() > 0) {
+					Intent intent = new Intent(context,
+							InterestedUserActivity.class);
+					intent.putExtra("INTERESTED_USERS",
+							mtSellerList.get(position).getNoOfCalls());
+					context.startActivity(intent);
+				}
+			}
+		});
+
+		updateInWishlistRL.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				SharedPreferences preferences = PreferenceManager
+						.getDefaultSharedPreferences(context);
+				Gson gson = new Gson();
+				String json = null;
+				Editor prefsEditor = preferences.edit();
+				MTSellerList sellerList = null;
+
+				if (source.equalsIgnoreCase("WishlistFragment")) {
+					mtSellerList.remove(position);
+
+					sellerList = new MTSellerList();
+					sellerList.setMTSellerList(mtSellerList);
+
+					MTAlertUtil.showMessesBox(context, "Mandi Trades",
+							"Successfully Removed from WishList",
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+
+									notifyDataSetChanged();
+								}
+							});
+
+				} else {
+
+					json = preferences.getString("WISH_LIST", null);
+
+					if (json != null) {
+						sellerList = gson.fromJson(json, MTSellerList.class);
+
+						wishList = sellerList.getMTSellerList();
+
+						int index = Collections.binarySearch(wishList,
+								mtSellerList.get(position),
+								new MTSellerComparator());
+
+						if (index < 0) {
+							wishList.add(mtSellerList.get(position));
+							sellerList.setMTSellerList(wishList);
+
+							MTAlertUtil.showMessesBox(context, "Mandi Trades",
+									"Successfully Added To Wishlist",
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+
+										}
+									});
+
+						} else {
+							MTAlertUtil.showMessesBox(context, "Mandi Trades",
+									"Already in Wishlist.",
+									new DialogInterface.OnClickListener() {
+
+										@Override
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+
+										}
+									});
+
+						}
+
+					} else {
+						wishList = new ArrayList<MTSeller>();
+						wishList.add(mtSellerList.get(position));
+
+						sellerList = new MTSellerList();
+						sellerList.setMTSellerList(wishList);
+
+						MTAlertUtil.showMessesBox(context, "Mandi Trades",
+								"Successfully Added To Wishlist",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+									}
+								});
+					}
+
+				}
+				if (sellerList != null) {
+					json = gson.toJson(sellerList);
+					prefsEditor.putString("WISH_LIST", json);
+					prefsEditor.commit();
+				}
+			}
+
+		});
+
+		directionRL.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View view) {
+				double latitude = 0.0;
+				double longitude = 0.0;
+				latitude = Double.valueOf(mtSellerList.get(position)
+						.getLatLang()[0]);
+				longitude = Double.valueOf(mtSellerList.get(position)
+						.getLatLang()[1]);
+				GPSTracker gpsTracker = new GPSTracker(context);
+				final Intent intent = new Intent(Intent.ACTION_VIEW, Uri
+						.parse("http://maps.google.com/maps?" + "saddr="
+								+ gpsTracker.getLatitude() + ","
+								+ gpsTracker.getLongitude() + "&daddr="
+								+ latitude + "," + longitude));
+				intent.setClassName("com.google.android.apps.maps",
+						"com.google.android.maps.MapsActivity");
+				context.startActivity(intent);
+			}
+		});
+
+		return convertView;
+	}
+}
+
+class MTSellerComparator implements Comparator<MTSeller> {
+
+	@Override
+	public int compare(MTSeller s1, MTSeller s2) {
+		if (s1.getSellerId().getId().equals(s2.getSellerId().getId())) {
+			return 0;
+		} else {
+			return -1;
+		}
+	}
+
+}

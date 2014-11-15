@@ -56,13 +56,20 @@ public class ImagePagerAdapter extends PagerAdapter {
 				R.dimen.padding_image);
 		imageView.setPadding(padding, padding, padding, padding);
 		// imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-		String url = String.format("%s%s%s",
-				MTURLHelper.getAPIEndpointURL(""), "/v1/",
-				imageUrls.get(position)).replace(" ", "%20");
 
-		System.out.println("@@@@ " + url);
+		if (!imageUrls.get(0).equalsIgnoreCase("noimage")) {
 
-		imageView.setImageUrl(url);
+			String url = String.format("%s%s%s",
+					MTURLHelper.getAPIEndpointURL(""), "/v1/",
+					imageUrls.get(position)).replace(" ", "%20");
+
+			System.out.println("@@@@ " + url);
+
+			imageView.setImageUrl(url);
+
+		} else {
+			imageView.setImageResource(R.drawable.noimage);
+		}
 
 		imageView.setOnClickListener(new OnClickListener() {
 

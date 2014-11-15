@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,6 +35,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Base64;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,6 +44,7 @@ import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
@@ -53,8 +57,12 @@ import android.widget.ToggleButton;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
+import com.loopj.android.image.SmartImageView;
 import com.manditrades.R;
 import com.manditrades.adapters.ImagePagerAdapter;
+import com.manditrades.cache.CommoditiesCache;
+import com.manditrades.cache.UserProfileCache;
+import com.manditrades.jsonwrapper.MTId;
 import com.manditrades.jsonwrapper.MTSeller;
 import com.manditrades.jsonwrapper.MTSellerList;
 import com.manditrades.util.GPSTracker;
@@ -78,7 +86,7 @@ public class SellerInfoActivity extends Activity implements
 	private ImageView verified;
 	private RatingBar ratingBar;
 	private TextView memberSince;
-	private ImageView defaultImage;
+	private SmartImageView defaultImage;
 	private TextView quantity;
 	private TextView pricePerKg;
 	private TextView variety;
@@ -89,6 +97,8 @@ public class SellerInfoActivity extends Activity implements
 	private ArrayList<String> imageUrls;
 	private MediaPlayer mediaPlayer;
 	private VideoView videoView;
+	private ImageView noVideoIV;
+	private RelativeLayout noAudioIV;
 	private MediaController mediaController;
 	private List<String> mImages = new ArrayList<String>();
 	private Button tabBtnImage;
@@ -106,6 +116,10 @@ public class SellerInfoActivity extends Activity implements
 	private ImageView updateWishlistIV;
 	private TextView postedOnTV;
 	private MTSeller seller;
+	private ImageView callIV;
+	private TextView reportPost;
+
+	private boolean hasReceivedResult;
 
 	private int CALL_REQUEST_CODE = 500;
 
@@ -139,7 +153,11 @@ public class SellerInfoActivity extends Activity implements
 			public void receiveData(JSONObject responseJson) {
 				try {
 					JSONObject root = responseJson.getJSONObject("root");
-					JSONArray imagesArray = root.getJSONArray("images");
+					JSONArray imagesArray = null;
+					hasReceivedResult = true;
+					Object object = root.get("images");
+					if (!object.equals(null))
+						imagesArray = root.getJSONArray("images");
 					audioUrl = root.getString("audio");
 					videoUrl = root.getString("video");
 					if (imagesArray != null) {
@@ -153,21 +171,12 @@ public class SellerInfoActivity extends Activity implements
 								imageUrls));
 						indicator.setViewPager(viewPager);
 
-						if (videoUrl != null) {
-							videoView
-									.setVideoURI(Uri.parse(String.format(
-											"%s/v1/%s",
-											MTURLHelper.getAPIEndpointURL(""),
-											videoUrl)));
-							videoView.setMediaController(mediaController);
-							videoView.seekTo(1);
-							videoView.setFitsSystemWindows(true);
-						}
-
-						if (audioUrl != null) {
-
-						}
-
+					} else {
+						imageUrls = new ArrayList<String>();
+						imageUrls.add("noimage");
+						viewPager.setAdapter(new ImagePagerAdapter(context,
+								imageUrls));
+						indicator.setViewPager(viewPager);
 					}
 
 				} catch (JSONException e) {
@@ -183,10 +192,89 @@ public class SellerInfoActivity extends Activity implements
 	}
 
 	private void setActionBar() {
-		MTUtil.setActionBar(context, "Seller's Information", true);
+		final Activity activity = (Activity) context;
+		activity.getActionBar()
+				.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		activity.getActionBar().setCustomView(
+				R.layout.layout_action_bar_create_alert);
+
+		View view = LayoutInflater.from(activity).inflate(
+				R.layout.layout_action_bar_create_alert, null);
+
+		TextView customView = (TextView) view
+				.findViewById(R.id.action_bar_title);
+
+		customView.setText("Seller's Information");
+
+		final ImageButton sharePost = (ImageButton) view
+				.findViewById(R.id.create_img_btn);
+		sharePost.setImageResource(R.drawable.share);
+		final ImageButton backImgBtn = (ImageButton) view
+				.findViewById(R.id.backBtn);
+
+		backImgBtn.setVisibility(View.VISIBLE);
+
+		backImgBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				activity.finish();
+			}
+		});
+
+		sharePost.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(Intent.ACTION_SEND);
+				i.setType("text/plain");
+				i.putExtra(Intent.EXTRA_SUBJECT, "Sharing POST");
+				i.putExtra(
+						Intent.EXTRA_TEXT,
+						seller.getSellerName() + " is selling "
+								+ seller.getSellerQuantity() + " Kg of "
+								+ seller.getSellerCommodity() + "("
+								+ seller.getSellerVariety() + ") at Rs."
+								+ seller.getSellerPrice() + "/Kg");
+				startActivity(Intent.createChooser(i, "Share POST"));
+			}
+		});
+
+		ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+				ActionBar.LayoutParams.MATCH_PARENT,
+				ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+
+		activity.getActionBar().setCustomView(view, params);
+
 	}
 
 	private void setListeners() {
+
+		reportPost.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				String postId = seller.getPostId() != null ? seller.getPostId()
+						.getId() : seller.getSellerId().getId();
+				String[] to = { "ceo@farmobi.in" };
+				String[] cc = { "" };
+				sendEmail(
+						to,
+						cc,
+						"Report Post",
+						"Post ID : "
+								+ postId
+								+ "\n Post : "
+								+ seller.getSellerName()
+								+ " is selling "
+								+ seller.getSellerCommodity()
+								+ " for Rs."
+								+ seller.getSellerPrice()
+								+ " per kg \nPosted On : "
+								+ MTFormatter.formatDateString(MTFormatter
+										.getDateFromString(seller.getDOC()
+												.getDate()), false));
+			}
+		});
 
 		playPause.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -204,50 +292,65 @@ public class SellerInfoActivity extends Activity implements
 		seekBar.setOnSeekBarChangeListener(this);
 
 		tabBtnImage.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View view) {
 				audioLL.setVisibility(View.GONE);
 				videoLL.setVisibility(View.GONE);
 				imageLL.setVisibility(View.VISIBLE);
-				tabBtnImage.setBackgroundColor(Color.BLACK);
-				tabBtnVideo.setBackgroundColor(Color.LTGRAY);
-				tabBtnImage.setTextColor(Color.LTGRAY);
-				tabBtnVideo.setTextColor(Color.BLACK);
-				tabBtnAudio.setBackgroundColor(Color.LTGRAY);
-				tabBtnAudio.setTextColor(Color.BLACK);
+				tabBtnImage.setBackgroundColor(Color.parseColor("#ff9ab63c"));
+				tabBtnVideo.setBackgroundColor(Color.WHITE);
+				tabBtnImage.setTextColor(Color.WHITE);
+				tabBtnVideo.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setBackgroundColor(Color.WHITE);
+				tabBtnAudio.setTextColor(Color.parseColor("#ff9ab63c"));
 			}
 		});
 
 		tabBtnVideo.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View view) {
 				videoLL.setVisibility(View.VISIBLE);
 				imageLL.setVisibility(View.GONE);
 				audioLL.setVisibility(View.GONE);
-				tabBtnImage.setBackgroundColor(Color.LTGRAY);
-				tabBtnVideo.setBackgroundColor(Color.BLACK);
-				tabBtnVideo.setTextColor(Color.LTGRAY);
-				tabBtnImage.setTextColor(Color.BLACK);
-				tabBtnAudio.setBackgroundColor(Color.LTGRAY);
-				tabBtnAudio.setTextColor(Color.BLACK);
+				tabBtnImage.setBackgroundColor(Color.WHITE);
+				tabBtnVideo.setBackgroundColor(Color.parseColor("#ff9ab63c"));
+				tabBtnVideo.setTextColor(Color.WHITE);
+				tabBtnImage.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setBackgroundColor(Color.WHITE);
+				tabBtnAudio.setTextColor(Color.parseColor("#ff9ab63c"));
+				if (hasReceivedResult)
+					if (videoUrl != null && !videoUrl.equals("null")) {
+						videoView.setVideoURI(Uri.parse(String.format(
+								"%s/v1/%s", MTURLHelper.getAPIEndpointURL(""),
+								videoUrl)));
+						videoView.setMediaController(mediaController);
+						videoView.seekTo(1);
+						videoView.setFitsSystemWindows(true);
+					} else {
+						videoView.setVisibility(View.GONE);
+						noVideoIV.setVisibility(View.VISIBLE);
+					}
 			}
 		});
 
 		tabBtnAudio.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View view) {
 				audioLL.setVisibility(View.VISIBLE);
 				imageLL.setVisibility(View.GONE);
 				videoLL.setVisibility(View.GONE);
-				tabBtnImage.setBackgroundColor(Color.LTGRAY);
-				tabBtnVideo.setBackgroundColor(Color.LTGRAY);
-				tabBtnVideo.setTextColor(Color.BLACK);
-				tabBtnImage.setTextColor(Color.BLACK);
-				tabBtnAudio.setBackgroundColor(Color.BLACK);
-				tabBtnAudio.setTextColor(Color.LTGRAY);
+				tabBtnImage.setBackgroundColor(Color.WHITE);
+				tabBtnVideo.setBackgroundColor(Color.WHITE);
+				tabBtnVideo.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnImage.setTextColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setBackgroundColor(Color.parseColor("#ff9ab63c"));
+				tabBtnAudio.setTextColor(Color.WHITE);
+				if (hasReceivedResult)
+					if (audioUrl.equals("null")) {
+						playPause.setVisibility(View.GONE);
+						seekBar.setVisibility(View.GONE);
+						noAudioIV.setVisibility(View.VISIBLE);
+					}
 
 			}
 		});
@@ -255,7 +358,6 @@ public class SellerInfoActivity extends Activity implements
 		// down bar actions
 
 		directionRL.setOnClickListener(new OnClickListener() {
-
 			@Override
 			public void onClick(View v) {
 				double latitude = 0.0;
@@ -278,63 +380,103 @@ public class SellerInfoActivity extends Activity implements
 
 			@Override
 			public void onClick(View view) {
-				Intent intent = new Intent(context,
-						InterestedUserActivity.class);
-				intent.putExtra("INTERESTED_USERS", seller.getNoOfCalls());
-				context.startActivity(intent);
+				if (seller.getNoOfCalls() != null
+						&& seller.getNoOfCalls().size() > 0) {
+					Intent intent = new Intent(context,
+							InterestedUserActivity.class);
+					intent.putExtra("INTERESTED_USERS", seller.getNoOfCalls());
+					context.startActivity(intent);
+				}
 			}
 		});
 
-		updateWishlistRL.setOnClickListener(new OnClickListener() {
+		if (!UserProfileCache.getUserProfile().getProfile().getMobile()
+				.equalsIgnoreCase(seller.getSellerMobileNo())) {
 
-			@Override
-			public void onClick(View view) {
+			updateWishlistRL.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
 
-				SharedPreferences preferences = PreferenceManager
-						.getDefaultSharedPreferences(context);
-				Gson gson = new Gson();
-				String json = null;
-				Editor prefsEditor = preferences.edit();
-				MTSellerList sellerList = null;
-				ArrayList<MTSeller> wishList;
+					SharedPreferences preferences = PreferenceManager
+							.getDefaultSharedPreferences(context);
+					Gson gson = new Gson();
+					String json = null;
+					Editor prefsEditor = preferences.edit();
+					MTSellerList sellerList = null;
+					ArrayList<MTSeller> wishList;
 
-				if (source.equalsIgnoreCase("WishlistFragment")) {
+					if (source != null
+							&& source.equalsIgnoreCase("WishlistFragment")) {
 
-					json = preferences.getString("WISH_LIST", null);
-					sellerList = gson.fromJson(json, MTSellerList.class);
-					wishList = sellerList.getMTSellerList();
-					int index = Collections.binarySearch(wishList, seller,
-							new MTSellerComparator());
-
-					wishList.remove(index);
-
-					sellerList = new MTSellerList();
-					sellerList.setMTSellerList(wishList);
-
-					MTAlertUtil.showMessesBox(context, "Mandi Trades",
-							"Removed from Wishlist.",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-
-								}
-							});
-
-				} else {
-
-					json = preferences.getString("WISH_LIST", null);
-
-					if (json != null) {
+						json = preferences.getString("WISH_LIST", null);
 						sellerList = gson.fromJson(json, MTSellerList.class);
-
 						wishList = sellerList.getMTSellerList();
-
 						int index = Collections.binarySearch(wishList, seller,
 								new MTSellerComparator());
 
-						if (index < 0) {
+						wishList.remove(index);
+
+						sellerList = new MTSellerList();
+						sellerList.setMTSellerList(wishList);
+
+						MTAlertUtil.showMessesBox(context, "Mandi Trades",
+								"Removed from Wishlist.",
+								new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+									}
+								});
+
+					} else {
+
+						json = preferences.getString("WISH_LIST", null);
+
+						if (json != null) {
+							sellerList = gson
+									.fromJson(json, MTSellerList.class);
+
+							wishList = sellerList.getMTSellerList();
+
+							int index = Collections.binarySearch(wishList,
+									seller, new MTSellerComparator());
+
+							if (index < 0) {
+								wishList.add(seller);
+								sellerList.setMTSellerList(wishList);
+
+								MTAlertUtil.showMessesBox(context,
+										"Mandi Trades",
+										"Successfully Added To Wishlist",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+
+											}
+										});
+
+							} else {
+								MTAlertUtil.showMessesBox(context,
+										"Mandi Trades", "Already in Wishlist.",
+										new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+
+											}
+										});
+
+							}
+
+						} else {
+							wishList = new ArrayList<MTSeller>();
 							wishList.add(seller);
+
+							sellerList = new MTSellerList();
 							sellerList.setMTSellerList(wishList);
 
 							MTAlertUtil.showMessesBox(context, "Mandi Trades",
@@ -347,80 +489,52 @@ public class SellerInfoActivity extends Activity implements
 
 										}
 									});
-
-						} else {
-							MTAlertUtil.showMessesBox(context, "Mandi Trades",
-									"Already in Wishlist.",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-
-										}
-									});
-
 						}
-
-					} else {
-						wishList = new ArrayList<MTSeller>();
-						wishList.add(seller);
-
-						sellerList = new MTSellerList();
-						sellerList.setMTSellerList(wishList);
-
-						MTAlertUtil.showMessesBox(context, "Mandi Trades",
-								"Successfully Added To Wishlist",
-								new DialogInterface.OnClickListener() {
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-
-									}
-								});
+						if (sellerList != null) {
+							json = gson.toJson(sellerList);
+							prefsEditor.putString("WISH_LIST", json);
+							prefsEditor.commit();
+						}
 					}
-					if (sellerList != null) {
-						json = gson.toJson(sellerList);
-						prefsEditor.putString("WISH_LIST", json);
-						prefsEditor.commit();
-					}
+
 				}
+			});
 
-			}
-		});
-		callRL.setOnClickListener(new OnClickListener() {
+			callRL.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					MTAlertUtil.showMessesBox(context, "Phone", "Call "
+							+ seller.getSellerMobileNo() + "?",
+							new DialogInterface.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				MTAlertUtil.showMessesBox(context, "Phone",
-						"Call " + seller.getSellerMobileNo() + "?",
-						new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent callIntent = new Intent(
+											Intent.ACTION_CALL);
+									callIntent.setData(Uri.parse("tel:91"
+											+ seller.getSellerMobileNo()));
+									startActivityForResult(callIntent,
+											CALL_REQUEST_CODE);
+								}
+							}, new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Intent callIntent = new Intent(
-										Intent.ACTION_CALL);
-								callIntent.setData(Uri.parse("tel:91"
-										+ seller.getSellerMobileNo()));
-								startActivityForResult(callIntent,
-										CALL_REQUEST_CODE);
-							}
-						}, new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									Intent intent = new Intent(context,
+											RateUserActivity.class);
+									intent.putExtra("SELLER_INFO", seller);
+									startActivity(intent);
+								}
+							}, "Call", "Don't call");
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Intent intent = new Intent(context,
-										RateUserActivity.class);
-								intent.putExtra("SELLER_INFO", seller);
-								startActivity(intent);
-							}
-						}, "Call", "Don't call");
-
-			}
-		});
-
+				}
+			});
+		} else {
+			callIV.setImageResource(R.drawable.phone_icon_white_disabled);
+			updateWishlistIV.setImageResource(R.drawable.add_heart_disabled);
+		}
 	}
 
 	@Override
@@ -524,11 +638,13 @@ public class SellerInfoActivity extends Activity implements
 		verified = (ImageView) findViewById(R.id.verified);
 		ratingBar = (RatingBar) findViewById(R.id.rating_bar);
 		memberSince = (TextView) findViewById(R.id.member_since);
-		defaultImage = (ImageView) findViewById(R.id.default_image);
+		defaultImage = (SmartImageView) findViewById(R.id.default_image);
 		quantity = (TextView) findViewById(R.id.quantity);
 		pricePerKg = (TextView) findViewById(R.id.price_per_kg);
 		variety = (TextView) findViewById(R.id.variety);
 		videoView = (VideoView) findViewById(R.id.video_view);
+		noVideoIV = (ImageView) findViewById(R.id.no_video_iv);
+		noAudioIV = (RelativeLayout) findViewById(R.id.no_audio_iv);
 		sellerAddress = (TextView) findViewById(R.id.seller_address);
 		distance = (TextView) findViewById(R.id.distance);
 		noOfCalls = (TextView) findViewById(R.id.no_of_calls);
@@ -542,6 +658,7 @@ public class SellerInfoActivity extends Activity implements
 		audioLL = (LinearLayout) findViewById(R.id.audio_bar_ll);
 		postedOnTV = (TextView) findViewById(R.id.posted_on);
 		mediaController = new MediaController(context);
+		callIV = (ImageView) findViewById(R.id.call_iv);
 
 		directionRL = (RelativeLayout) findViewById(R.id.directionRL);
 		updateWishlistRL = (RelativeLayout) findViewById(R.id.update_wishlist_rl);
@@ -549,9 +666,11 @@ public class SellerInfoActivity extends Activity implements
 		updateWishlistIV = (ImageView) findViewById(R.id.update_wishlist_iv);
 		interestedUserRL = (RelativeLayout) findViewById(R.id.interested_user_rl);
 
-		if (source.equals("WishlistFragment")) {
-			updateWishlistIV.setImageResource(R.drawable.remove_icon);
-		}
+		reportPost = (TextView) findViewById(R.id.report_post_tv);
+
+		// if (source != null && source.equals("WishlistFragment")) {
+		// updateWishlistIV.setImageResource(R.drawable.remove_icon);
+		// }
 	}
 
 	private void setSellerInfo() {
@@ -570,26 +689,20 @@ public class SellerInfoActivity extends Activity implements
 		verified.setVisibility(View.VISIBLE);
 		// else
 		// verified.setVisibility(View.GONE);
-		ratingBar.setRating(Float.parseFloat(seller.getRating()));
-		memberSince.setText(seller.getMemberSince());
-		try {
-			defaultImage.setImageBitmap(BitmapFactory.decodeStream(getAssets()
-					.open("default_jpg/"
-							+ seller.getSellerCommodity().toLowerCase()
-							+ ".jpg")));
-		} catch (IOException e) {
-			try {
-				defaultImage.setImageBitmap(BitmapFactory
-						.decodeStream(getAssets().open(
-								"default_png/"
-										+ seller.getSellerCommodity()
-												.toLowerCase() + ".png")));
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
-		quantity.setText(seller.getSellerQuantity());
-		pricePerKg.setText(seller.getSellerPrice());
+		ratingBar
+				.setRating(Float.parseFloat(seller.getRating() != null ? seller
+						.getRating() : "0.0"));
+		memberSince.setText(MTFormatter.formatDateMMDDYYYY(MTFormatter
+				.getDateFromString(seller.getMemberSince())));
+
+		String image_url = CommoditiesCache.getCommoditiesCache()
+				.getCommodityUrl(
+						seller.getSellerCommodity() + "_"
+								+ seller.getSellerVariety());
+		defaultImage.setImageUrl(image_url);
+
+		quantity.setText(seller.getSellerQuantity() + " kg available");
+		pricePerKg.setText(seller.getSellerPrice() + " per kg");
 		variety.setText(seller.getSellerVariety());
 		sellerAddress.setText(seller.getSellerAddress());
 
@@ -657,13 +770,30 @@ public class SellerInfoActivity extends Activity implements
 
 	}
 
+	public void sendEmail(String[] to, String[] cc, String subject,
+			String message) {
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+		emailIntent.setData(Uri.parse("mailto:"));
+		emailIntent.putExtra(Intent.EXTRA_EMAIL, to);
+		emailIntent.putExtra(Intent.EXTRA_CC, cc);
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+		emailIntent.putExtra(Intent.EXTRA_TEXT, message);
+		emailIntent.setType("message/rfc822");
+		startActivity(Intent.createChooser(emailIntent, "Email"));
+	}
+
 }
 
 class MTSellerComparator implements Comparator<MTSeller> {
 
 	@Override
 	public int compare(MTSeller s1, MTSeller s2) {
-		if (s1.getSellerId().getId().equals(s2.getSellerId().getId())) {
+		MTId postId1 = s1.getSellerId() != null ? s1.getSellerId() : s1
+				.getPostId();
+		MTId postId2 = s2.getSellerId() != null ? s2.getSellerId() : s2
+				.getPostId();
+
+		if (postId1.getId().equals(postId2.getId())) {
 			return 0;
 		} else {
 			return -1;

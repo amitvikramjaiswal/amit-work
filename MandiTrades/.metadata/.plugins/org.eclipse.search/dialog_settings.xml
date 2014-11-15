@@ -11,7 +11,7 @@
 		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
 	</section>
 	<section name="DialogBounds_SearchDialog">
-		<item value="530" key="DIALOG_WIDTH"/>
+		<item value="587" key="DIALOG_WIDTH"/>
 		<item value="213" key="DIALOG_Y_ORIGIN"/>
 		<item value="360" key="DIALOG_X_ORIGIN"/>
 		<item value="472" key="DIALOG_HEIGHT"/>
@@ -38,10 +38,10 @@
 		<item value="false" key="CASE_SENSITIVE"/>
 		<item value="false" key="REG_EX_SEARCH"/>
 		<item value="false" key="SEARCH_DERIVED"/>
-		<item value="6" key="HISTORY_SIZE"/>
+		<item value="11" key="HISTORY_SIZE"/>
 		<section name="HISTORY2">
 			<item value="false" key="isRegExSearch"/>
-			<item value="rajesh" key="textPattern"/>
+			<item value="mandiTrades[language]" key="textPattern"/>
 			<item value="3" key="scope"/>
 			<item value="true" key="ignoreCase"/>
 			<list key="fileNamePatterns">
@@ -55,18 +55,7 @@
 		</section>
 		<section name="HISTORY3">
 			<item value="false" key="isRegExSearch"/>
-			<item value="GPSTracker" key="textPattern"/>
-			<item value="3" key="scope"/>
-			<item value="true" key="ignoreCase"/>
-			<list key="fileNamePatterns">
-				<item value="*"/>
-			</list>
-			<list key="workingSets">
-			</list>
-		</section>
-		<section name="HISTORY0">
-			<item value="false" key="isRegExSearch"/>
-			<item value="setSingleVarietyCommodities" key="textPattern"/>
+			<item value="selectCommodity[language]" key="textPattern"/>
 			<item value="0" key="scope"/>
 			<item value="true" key="ignoreCase"/>
 			<list key="fileNamePatterns">
@@ -75,18 +64,7 @@
 			<list key="workingSets">
 			</list>
 		</section>
-		<section name="HISTORY1">
-			<item value="false" key="isRegExSearch"/>
-			<item value="setProfile" key="textPattern"/>
-			<item value="3" key="scope"/>
-			<item value="true" key="ignoreCase"/>
-			<list key="fileNamePatterns">
-				<item value="*"/>
-			</list>
-			<list key="workingSets">
-			</list>
-		</section>
-		<section name="HISTORY5">
+		<section name="HISTORY10">
 			<item value="false" key="isRegExSearch"/>
 			<item value="hamburger" key="textPattern"/>
 			<item value="3" key="scope"/>
@@ -97,7 +75,29 @@
 			<list key="workingSets">
 			</list>
 		</section>
-		<section name="HISTORY4">
+		<section name="HISTORY0">
+			<item value="false" key="isRegExSearch"/>
+			<item value="selectCommodity" key="textPattern"/>
+			<item value="0" key="scope"/>
+			<item value="true" key="ignoreCase"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY1">
+			<item value="false" key="isRegExSearch"/>
+			<item value="Select Commodity" key="textPattern"/>
+			<item value="0" key="scope"/>
+			<item value="true" key="ignoreCase"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY9">
 			<item value="false" key="isRegExSearch"/>
 			<item value="project_number" key="textPattern"/>
 			<item value="3" key="scope"/>
@@ -108,8 +108,63 @@
 			<list key="workingSets">
 			</list>
 		</section>
+		<section name="HISTORY8">
+			<item value="false" key="isRegExSearch"/>
+			<item value="GPSTracker" key="textPattern"/>
+			<item value="3" key="scope"/>
+			<item value="true" key="ignoreCase"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY5">
+			<item value="false" key="isRegExSearch"/>
+			<item value="setSingleVarietyCommodities" key="textPattern"/>
+			<item value="0" key="scope"/>
+			<item value="true" key="ignoreCase"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY4">
+			<item value="false" key="isRegExSearch"/>
+			<item value="message_key" key="textPattern"/>
+			<item value="0" key="scope"/>
+			<item value="true" key="ignoreCase"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY7">
+			<item value="false" key="isRegExSearch"/>
+			<item value="rajesh" key="textPattern"/>
+			<item value="3" key="scope"/>
+			<item value="true" key="ignoreCase"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY6">
+			<item value="false" key="isRegExSearch"/>
+			<item value="setProfile" key="textPattern"/>
+			<item value="3" key="scope"/>
+			<item value="true" key="ignoreCase"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
 	</section>
 	<section name="SearchDialog.ScopePart">
-		<item value="3" key="scope"/>
+		<item value="0" key="scope"/>
 	</section>
 </section>

@@ -16,6 +16,7 @@
     <dimen name="height_row">50dp</dimen>
     <dimen name="height_button">70dp</dimen>
     <dimen name="margin_left_right">10dp</dimen>
+    <dimen name="margin_address">15dp</dimen>
     <dimen name="width_large_field">260dp</dimen>
     <dimen name="size_icon">50dp</dimen>
     <dimen name="margin_right">5dp</dimen>
@@ -29,6 +30,7 @@
     <dimen name="padding_main_menu_icon">30dp</dimen>
     <dimen name="padding_main_menu_layout">15dp</dimen>
     <dimen name="size_main_menu_icon_rl">112dp</dimen>
+    <dimen name="slidermenu_width">200dp</dimen>
 
     <!-- New Sale Commodity Page -->
 
@@ -50,6 +52,7 @@
     <dimen name="padding_image">5dp</dimen>
     <dimen name="padding_normal">10dp</dimen>
     <dimen name="padding_small">5dp</dimen>
+    <dimen name="text_size_timer">30sp</dimen>
 
     <!-- NEWS Page -->
     <dimen name="width_news_image">120dp</dimen>

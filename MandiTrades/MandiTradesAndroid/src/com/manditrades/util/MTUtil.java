@@ -32,7 +32,8 @@ public class MTUtil {
 		sellerLocation.setLongitude(Double.parseDouble(lng));
 		double totalDistance = currentLocation.distanceTo(sellerLocation) / 1000.00;
 
-		return String.format("%.2f %s", totalDistance, "km");
+		return String.format("%.2f %s", totalDistance,
+				totalDistance == 1 ? "Km" : "Kms");
 
 	}
 

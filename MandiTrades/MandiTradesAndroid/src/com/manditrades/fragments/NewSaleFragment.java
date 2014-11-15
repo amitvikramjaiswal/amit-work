@@ -12,6 +12,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -85,6 +86,14 @@ public class NewSaleFragment extends Fragment {
 	}
 
 	@Override
+	public void onPause() {
+		super.onPause();
+		Editor editor = preferences.edit();
+		editor.putString("SOURCE", "NewSaleFragment");
+		editor.commit();
+	}
+
+	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
@@ -155,243 +164,253 @@ public class NewSaleFragment extends Fragment {
 		pulsesTV.setText(scripts.pulses[language]);
 		spicesTV.setText(scripts.spices[language]);
 
-		((Activity) context).getActionBar().setTitle(
-				scripts.selectCommodity[language]);
+		Activity activity = ((Activity) context);
+
+		ViewPager mViewPager = (ViewPager) activity.findViewById(R.id.pager);
+
+		if (mViewPager != null && mViewPager.getCurrentItem() == 1)
+			activity.getActionBar().setTitle(scripts.mandiTrades[language]);
+		else
+			activity.getActionBar().setTitle(scripts.selectCommodity[language]);
 	}
 
 	private void setCommodities() {
 
-		for (final MTCommodity commodity : CommoditiesCache
-				.getCommoditiesCache().getSingleVarietyCommodities()) {
+		ArrayList<MTCommodity> singleVarietyCommodities = CommoditiesCache
+				.getCommoditiesCache().getSingleVarietyCommodities();
 
-			if (commodity.getCategory().equalsIgnoreCase("Fruits")) {
-				inflater = (LayoutInflater) context
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				child = inflater
-						.inflate(R.layout.newsale_template, null, false);
+		if (singleVarietyCommodities != null)
+			for (final MTCommodity commodity : singleVarietyCommodities) {
 
-				child.setPadding(5, 5, 5, 5);
+				if (commodity.getCategory().equalsIgnoreCase("Fruits")) {
+					inflater = (LayoutInflater) context
+							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					child = inflater.inflate(R.layout.newsale_template, null,
+							false);
 
-				image = (SmartImageView) child.findViewById(R.id.image);
-				image_name = (TextView) child.findViewById(R.id.image_name);
+					child.setPadding(5, 5, 5, 5);
 
-				image.setImageUrl(CommoditiesCache.getCommoditiesCache()
-						.getCommodityUrl(
-								commodity.getCommodity() + "_"
-										+ commodity.getVariety()));
+					image = (SmartImageView) child.findViewById(R.id.image);
+					image_name = (TextView) child.findViewById(R.id.image_name);
 
-				image_name.setText(commodity.getCommodity());
-				lLinsideHSV1.addView(child);
+					image.setImageUrl(CommoditiesCache.getCommoditiesCache()
+							.getCommodityUrl(
+									commodity.getCommodity() + "_"
+											+ commodity.getVariety()));
 
-				if (child != null)
-					child.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
+					image_name.setText(commodity.getCommodity());
+					lLinsideHSV1.addView(child);
 
-							CommoditiesCache.getCommoditiesCache()
-									.setVarieties(commodities,
-											commodity.getCommodity());
+					if (child != null)
+						child.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
 
-							Intent intent;
+								CommoditiesCache.getCommoditiesCache()
+										.setVarieties(commodities,
+												commodity.getCommodity());
 
-							if (createAlert) {
-								intent = new Intent(context,
-										CreateAlertActivity.class);
-								intent.putExtra("ALERT_LIST", alertList);
-							} else
-								intent = new Intent(context,
-										NewPostActivity.class);
+								Intent intent;
 
-							intent.putExtra("SELECTED_CATEGORY",
-									commodity.getCategory());
-							intent.putExtra("SELECTED_COMMODITY",
-									commodity.getCommodity());
-							startActivity(intent);
-						}
-					});
+								if (createAlert) {
+									intent = new Intent(context,
+											CreateAlertActivity.class);
+									intent.putExtra("ALERT_LIST", alertList);
+								} else
+									intent = new Intent(context,
+											NewPostActivity.class);
 
-			} else if (commodity.getCategory().equalsIgnoreCase("Vegetables")) {
-				inflater = (LayoutInflater) context
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				child = inflater
-						.inflate(R.layout.newsale_template, null, false);
+								intent.putExtra("SELECTED_CATEGORY",
+										commodity.getCategory());
+								intent.putExtra("SELECTED_COMMODITY",
+										commodity.getCommodity());
+								startActivity(intent);
+							}
+						});
 
-				child.setPadding(5, 5, 5, 5);
+				} else if (commodity.getCategory().equalsIgnoreCase(
+						"Vegetables")) {
+					inflater = (LayoutInflater) context
+							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					child = inflater.inflate(R.layout.newsale_template, null,
+							false);
 
-				image = (SmartImageView) child.findViewById(R.id.image);
-				image_name = (TextView) child.findViewById(R.id.image_name);
+					child.setPadding(5, 5, 5, 5);
 
-				image.setImageUrl(CommoditiesCache.getCommoditiesCache()
-						.getCommodityUrl(
-								commodity.getCommodity() + "_"
-										+ commodity.getVariety()));
+					image = (SmartImageView) child.findViewById(R.id.image);
+					image_name = (TextView) child.findViewById(R.id.image_name);
 
-				image_name.setText(commodity.getCommodity());
-				lLinsideHSV2.addView(child);
+					image.setImageUrl(CommoditiesCache.getCommoditiesCache()
+							.getCommodityUrl(
+									commodity.getCommodity() + "_"
+											+ commodity.getVariety()));
 
-				if (child != null)
-					child.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
+					image_name.setText(commodity.getCommodity());
+					lLinsideHSV2.addView(child);
 
-							CommoditiesCache.getCommoditiesCache()
-									.setVarieties(commodities,
-											commodity.getCommodity());
+					if (child != null)
+						child.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
 
-							Intent intent;
+								CommoditiesCache.getCommoditiesCache()
+										.setVarieties(commodities,
+												commodity.getCommodity());
 
-							if (createAlert) {
-								intent = new Intent(context,
-										CreateAlertActivity.class);
-								intent.putExtra("ALERT_LIST", alertList);
-							} else
-								intent = new Intent(context,
-										NewPostActivity.class);
-							intent.putExtra("SELECTED_CATEGORY",
-									commodity.getCategory());
-							intent.putExtra("SELECTED_COMMODITY",
-									commodity.getCommodity());
-							startActivity(intent);
-						}
-					});
+								Intent intent;
 
-			} else if (commodity.getCategory().equalsIgnoreCase("Cereals")) {
-				inflater = (LayoutInflater) context
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				child = inflater
-						.inflate(R.layout.newsale_template, null, false);
+								if (createAlert) {
+									intent = new Intent(context,
+											CreateAlertActivity.class);
+									intent.putExtra("ALERT_LIST", alertList);
+								} else
+									intent = new Intent(context,
+											NewPostActivity.class);
+								intent.putExtra("SELECTED_CATEGORY",
+										commodity.getCategory());
+								intent.putExtra("SELECTED_COMMODITY",
+										commodity.getCommodity());
+								startActivity(intent);
+							}
+						});
 
-				child.setPadding(5, 5, 5, 5);
+				} else if (commodity.getCategory().equalsIgnoreCase("Cereals")) {
+					inflater = (LayoutInflater) context
+							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					child = inflater.inflate(R.layout.newsale_template, null,
+							false);
 
-				image = (SmartImageView) child.findViewById(R.id.image);
-				image_name = (TextView) child.findViewById(R.id.image_name);
+					child.setPadding(5, 5, 5, 5);
 
-				image.setImageUrl(CommoditiesCache.getCommoditiesCache()
-						.getCommodityUrl(
-								commodity.getCommodity() + "_"
-										+ commodity.getVariety()));
+					image = (SmartImageView) child.findViewById(R.id.image);
+					image_name = (TextView) child.findViewById(R.id.image_name);
 
-				image_name.setText(commodity.getCommodity());
-				lLinsideHSV3.addView(child);
+					image.setImageUrl(CommoditiesCache.getCommoditiesCache()
+							.getCommodityUrl(
+									commodity.getCommodity() + "_"
+											+ commodity.getVariety()));
 
-				if (child != null)
-					child.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
+					image_name.setText(commodity.getCommodity());
+					lLinsideHSV3.addView(child);
 
-							CommoditiesCache.getCommoditiesCache()
-									.setVarieties(commodities,
-											commodity.getCommodity());
+					if (child != null)
+						child.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
 
-							Intent intent;
+								CommoditiesCache.getCommoditiesCache()
+										.setVarieties(commodities,
+												commodity.getCommodity());
 
-							if (createAlert) {
-								intent = new Intent(context,
-										CreateAlertActivity.class);
-								intent.putExtra("ALERT_LIST", alertList);
-							} else
-								intent = new Intent(context,
-										NewPostActivity.class);
-							intent.putExtra("SELECTED_CATEGORY",
-									commodity.getCategory());
-							intent.putExtra("SELECTED_COMMODITY",
-									commodity.getCommodity());
-							startActivity(intent);
-						}
-					});
+								Intent intent;
 
-			} else if (commodity.getCategory().equalsIgnoreCase("Pulses")) {
-				inflater = (LayoutInflater) context
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				child = inflater
-						.inflate(R.layout.newsale_template, null, false);
+								if (createAlert) {
+									intent = new Intent(context,
+											CreateAlertActivity.class);
+									intent.putExtra("ALERT_LIST", alertList);
+								} else
+									intent = new Intent(context,
+											NewPostActivity.class);
+								intent.putExtra("SELECTED_CATEGORY",
+										commodity.getCategory());
+								intent.putExtra("SELECTED_COMMODITY",
+										commodity.getCommodity());
+								startActivity(intent);
+							}
+						});
 
-				child.setPadding(5, 5, 5, 5);
+				} else if (commodity.getCategory().equalsIgnoreCase("Pulses")) {
+					inflater = (LayoutInflater) context
+							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					child = inflater.inflate(R.layout.newsale_template, null,
+							false);
 
-				image = (SmartImageView) child.findViewById(R.id.image);
-				image_name = (TextView) child.findViewById(R.id.image_name);
+					child.setPadding(5, 5, 5, 5);
 
-				image.setImageUrl(CommoditiesCache.getCommoditiesCache()
-						.getCommodityUrl(
-								commodity.getCommodity() + "_"
-										+ commodity.getVariety()));
+					image = (SmartImageView) child.findViewById(R.id.image);
+					image_name = (TextView) child.findViewById(R.id.image_name);
 
-				image_name.setText(commodity.getCommodity());
-				lLinsideHSV4.addView(child);
+					image.setImageUrl(CommoditiesCache.getCommoditiesCache()
+							.getCommodityUrl(
+									commodity.getCommodity() + "_"
+											+ commodity.getVariety()));
 
-				if (child != null)
-					child.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
+					image_name.setText(commodity.getCommodity());
+					lLinsideHSV4.addView(child);
 
-							CommoditiesCache.getCommoditiesCache()
-									.setVarieties(commodities,
-											commodity.getCommodity());
+					if (child != null)
+						child.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
 
-							Intent intent;
+								CommoditiesCache.getCommoditiesCache()
+										.setVarieties(commodities,
+												commodity.getCommodity());
 
-							if (createAlert) {
-								intent = new Intent(context,
-										CreateAlertActivity.class);
-								intent.putExtra("ALERT_LIST", alertList);
-							} else
-								intent = new Intent(context,
-										NewPostActivity.class);
-							intent.putExtra("SELECTED_CATEGORY",
-									commodity.getCategory());
-							intent.putExtra("SELECTED_COMMODITY",
-									commodity.getCommodity());
-							startActivity(intent);
-						}
-					});
+								Intent intent;
 
-			} else if (commodity.getCategory().equalsIgnoreCase("Spices")) {
-				inflater = (LayoutInflater) context
-						.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-				child = inflater
-						.inflate(R.layout.newsale_template, null, false);
+								if (createAlert) {
+									intent = new Intent(context,
+											CreateAlertActivity.class);
+									intent.putExtra("ALERT_LIST", alertList);
+								} else
+									intent = new Intent(context,
+											NewPostActivity.class);
+								intent.putExtra("SELECTED_CATEGORY",
+										commodity.getCategory());
+								intent.putExtra("SELECTED_COMMODITY",
+										commodity.getCommodity());
+								startActivity(intent);
+							}
+						});
 
-				child.setPadding(5, 5, 5, 5);
+				} else if (commodity.getCategory().equalsIgnoreCase("Spices")) {
+					inflater = (LayoutInflater) context
+							.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					child = inflater.inflate(R.layout.newsale_template, null,
+							false);
 
-				image = (SmartImageView) child.findViewById(R.id.image);
-				image_name = (TextView) child.findViewById(R.id.image_name);
+					child.setPadding(5, 5, 5, 5);
 
-				image.setImageUrl(CommoditiesCache.getCommoditiesCache()
-						.getCommodityUrl(
-								commodity.getCommodity() + "_"
-										+ commodity.getVariety()));
+					image = (SmartImageView) child.findViewById(R.id.image);
+					image_name = (TextView) child.findViewById(R.id.image_name);
 
-				image_name.setText(commodity.getCommodity());
-				lLinsideHSV5.addView(child);
+					image.setImageUrl(CommoditiesCache.getCommoditiesCache()
+							.getCommodityUrl(
+									commodity.getCommodity() + "_"
+											+ commodity.getVariety()));
 
-				if (child != null)
-					child.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
+					image_name.setText(commodity.getCommodity());
+					lLinsideHSV5.addView(child);
 
-							CommoditiesCache.getCommoditiesCache()
-									.setVarieties(commodities,
-											commodity.getCommodity());
+					if (child != null)
+						child.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
 
-							Intent intent;
+								CommoditiesCache.getCommoditiesCache()
+										.setVarieties(commodities,
+												commodity.getCommodity());
 
-							if (createAlert) {
-								intent = new Intent(context,
-										CreateAlertActivity.class);
-								intent.putExtra("ALERT_LIST", alertList);
-							} else
-								intent = new Intent(context,
-										NewPostActivity.class);
-							intent.putExtra("SELECTED_CATEGORY",
-									commodity.getCategory());
-							intent.putExtra("SELECTED_COMMODITY",
-									commodity.getCommodity());
-							startActivity(intent);
-						}
-					});
+								Intent intent;
 
+								if (createAlert) {
+									intent = new Intent(context,
+											CreateAlertActivity.class);
+									intent.putExtra("ALERT_LIST", alertList);
+								} else
+									intent = new Intent(context,
+											NewPostActivity.class);
+								intent.putExtra("SELECTED_CATEGORY",
+										commodity.getCategory());
+								intent.putExtra("SELECTED_COMMODITY",
+										commodity.getCommodity());
+								startActivity(intent);
+							}
+						});
+
+				}
 			}
-		}
 
 		// CommoditiesCache cache =
 		// CommoditiesCache.getCommoditiesCache();

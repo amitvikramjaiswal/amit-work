@@ -65,34 +65,50 @@
                     android:visibility="gone" />
             </LinearLayout>
 
-            <RatingBar
-                android:id="@+id/rb1"
-                android:layout_width="wrap_content"
-                android:layout_height="12dp"
-                android:clickable="false"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:isIndicator="true"
-                android:numStars="5"
-                android:progressDrawable="@drawable/rating_bar"
-                android:rating="4.0"
-                android:stepSize="0.5" />
+            <LinearLayout
+                android:id="@+id/rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <RatingBar
+                    android:id="@+id/rb1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="12dp"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:progressDrawable="@drawable/rating_bar"
+                    android:rating="4.0"
+                    android:stepSize="0.5" />
+
+                <TextView
+                    android:id="@+id/rated_by_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="@dimen/padding_small"
+                    android:textColor="#A4A4A4"
+                    android:textSize="@dimen/text_size_small" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/posted_on"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/padding_very_small"
-                android:paddingBottom="@dimen/padding_very_small"
-                android:textColor="#A4A4A4"
                 android:drawableLeft="@drawable/clock_icon"
+                android:paddingTop="@dimen/padding_very_small"
+                android:textColor="#A4A4A4"
                 android:textSize="@dimen/text_size_small" />
 
             <LinearLayout
                 android:id="@+id/rl3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="8dp"
                 android:orientation="vertical" >
 
                 <LinearLayout
@@ -213,7 +229,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_gravity="center_vertical"
-                            android:src="@drawable/heart" />
+                            android:src="@drawable/peoples" />
 
                         <TextView
                             android:id="@+id/no_of_calls"
@@ -251,7 +267,7 @@
                         android:layout_height="20dp"
                         android:layout_centerHorizontal="true"
                         android:layout_centerVertical="true"
-                        android:src="@drawable/addtolist" />
+                        android:src="@drawable/add_heart" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -261,6 +277,7 @@
                     android:layout_weight="1" >
 
                     <ImageView
+                        android:id="@+id/call_iv"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:layout_centerHorizontal="true"

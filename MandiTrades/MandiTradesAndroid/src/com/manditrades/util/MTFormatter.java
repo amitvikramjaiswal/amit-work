@@ -86,7 +86,10 @@ public class MTFormatter {
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy",
 				DateFormatSymbols.getInstance());
 
-		return format.format(date);
+		if (date != null)
+			return format.format(date);
+		else
+			return "";
 
 	}
 
@@ -126,7 +129,8 @@ public class MTFormatter {
 		Date date = null;
 
 		try {
-			date = format.parse(strDate);
+			if (strDate != null)
+				date = format.parse(strDate);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}

@@ -1,0 +1,177 @@
+package com.manditrades.activities;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.RatingBar;
+import android.widget.TextView;
+
+import com.manditrades.R;
+import com.manditrades.jsonwrapper.MTSeller;
+import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTURLHelper;
+
+public class RateUserActivity extends Activity {
+
+	private Context context;
+	private Button submitBtn;
+	private SharedPreferences preferences;
+	private TextView usernameTV;
+	private RatingBar ratingBar;
+	private String postId;
+	private String rating;
+	private String commodity;
+	private String buyerName;
+	private String price;
+	private String postDate;
+	private MTSeller seller;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.rate_seller);
+		context = this;
+
+		seller = (MTSeller) getIntent().getExtras().getSerializable(
+				"SELLER_INFO");
+
+		initComponents();
+
+		setActionBar();
+
+		submitBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				rating = ratingBar.getRating() + " ";
+				rateUser();
+			}
+		});
+
+	}
+
+	protected void rateUser() {
+		String url = MTURLHelper.getAPIEndpointURL(MTURLHelper.rateUserURL);
+		String method = "POST";
+
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+		params.add(new BasicNameValuePair("seller_mobile", mobileNo));
+		params.add(new BasicNameValuePair("rating", rating));
+
+		Object[] object = { url, method, params, null };
+
+		JsonDataCallback callback = new JsonDataCallback(context) {
+
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				try {
+					JSONObject root = responseJson.getJSONObject("root");
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		callback.execute(object);
+
+	}
+
+	private void setActionBar() {
+
+		Activity activity = (Activity) context;
+		activity.getActionBar()
+				.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		activity.getActionBar().setCustomView(
+				R.layout.layout_action_bar_with_back);
+
+		View view = LayoutInflater.from(activity).inflate(
+				R.layout.layout_action_bar_with_back, null);
+
+		TextView customView = (TextView) view
+				.findViewById(R.id.action_bar_title);
+
+		customView.setText("Rate User");
+
+		Button skipButton = (Button) view.findViewById(R.id.skipBtn);
+		ImageButton backButton = (ImageButton) view.findViewById(R.id.backBtn);
+		backButton.setVisibility(View.GONE);
+		skipButton.setVisibility(View.VISIBLE);
+		skipButton.setText("Skip");
+		skipButton.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				updateInterestedUserCount();
+
+			}
+		});
+
+		ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+				ActionBar.LayoutParams.MATCH_PARENT,
+				ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+
+		activity.getActionBar().setCustomView(view, params);
+	}
+
+	private void updateInterestedUserCount() {
+		String url = MTURLHelper
+				.getAPIEndpointURL(MTURLHelper.interestedUserURL);
+		String method = "POST";
+
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+		params.add(new BasicNameValuePair("post_id", ));
+		params.add(new BasicNameValuePair("commodity", commodity));
+		params.add(new BasicNameValuePair("buyer_name", buyerName));
+		params.add(new BasicNameValuePair("price", price));
+		params.add(new BasicNameValuePair("date_post", postDate));
+
+		System.out.println(params);
+
+		Object[] object = { url, method, params, null };
+
+		JsonDataCallback callback = new JsonDataCallback(context) {
+
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				try {
+					JSONObject root = responseJson.getJSONObject("root");
+					System.out.println("##### " + root.toString());
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+		callback.execute(object);
+	}
+
+	private void initComponents() {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		submitBtn = (Button) findViewById(R.id.submit);
+		usernameTV = (TextView) findViewById(R.id.name);
+		ratingBar = (RatingBar) findViewById(R.id.rating_bar);
+
+		postId = seller.getPostId().getId();
+		buyerName = preferences.getString("USERNAME", "");
+	}
+}

@@ -30,8 +30,10 @@ import com.manditrades.R;
 import com.manditrades.activities.InterestedUserActivity;
 import com.manditrades.activities.RateUserActivity;
 import com.manditrades.cache.CommoditiesCache;
+import com.manditrades.cache.UserProfileCache;
 import com.manditrades.jsonwrapper.MTSeller;
 import com.manditrades.jsonwrapper.MTSellerList;
+import com.manditrades.jsonwrapper.UserProfile;
 import com.manditrades.util.GPSTracker;
 import com.manditrades.util.MTAlertUtil;
 import com.manditrades.util.MTFormatter;
@@ -52,16 +54,19 @@ public class SellersListAdapter extends BaseAdapter {
 	private TextView price;
 	private TextView distance;
 	private TextView favorite;
+	private TextView ratedBy;
 	private RatingBar ratingbar;
 	private String name;
 	private RelativeLayout user_interested_rl;
 	private ImageView updateInWishlistIV;
 	private RelativeLayout updateInWishlistRL;
+	public static final int CALL = 100;
 
 	private String source;
 	private ArrayList<MTSeller> wishList;
 
 	AlertDialog.Builder alert;
+	private ImageView callIV;
 
 	public SellersListAdapter(Context context,
 			ArrayList<MTSeller> mtSellerList, String source) {
@@ -105,8 +110,10 @@ public class SellersListAdapter extends BaseAdapter {
 		price = (TextView) convertView.findViewById(R.id.tv5);
 		distance = (TextView) convertView.findViewById(R.id.distance);
 		favorite = (TextView) convertView.findViewById(R.id.no_of_calls);
+		ratedBy = (TextView) convertView.findViewById(R.id.rated_by_tv);
 		ratingbar = (RatingBar) convertView.findViewById(R.id.rb1);
 		callNumberRL = (RelativeLayout) convertView.findViewById(R.id.call);
+		callIV = (ImageView) convertView.findViewById(R.id.call_iv);
 		directionRL = (RelativeLayout) convertView.findViewById(R.id.direction);
 		updateInWishlistIV = (ImageView) convertView
 				.findViewById(R.id.update_in_wishlist_image);
@@ -116,9 +123,9 @@ public class SellersListAdapter extends BaseAdapter {
 		user_interested_rl = (RelativeLayout) convertView
 				.findViewById(R.id.interested_user_rl);
 
-		if (source.equalsIgnoreCase("WishlistFragment")) {
-			updateInWishlistIV.setImageResource(R.drawable.remove_icon);
-		}
+		// if (source.equalsIgnoreCase("WishlistFragment")) {
+		// updateInWishlistIV.setImageResource(R.drawable.remove_icon);
+		// }
 
 		String image_url = CommoditiesCache
 				.getCommoditiesCache()
@@ -138,9 +145,12 @@ public class SellersListAdapter extends BaseAdapter {
 
 		postedOnTV.setText(date);
 
-		available.setText(mtSellerList.get(position).getSellerQuantity());
+		available.setText(mtSellerList.get(position).getSellerQuantity()
+				+ " kg available");
 
-		price.setText(mtSellerList.get(position).getSellerPrice());
+		price.setText(mtSellerList.get(position).getSellerPrice() + " per kg");
+
+		ratedBy.setText("(" + mtSellerList.get(position).getRatedBy() + ")");
 
 		try {
 			ratingbar.setRating(Float.parseFloat(mtSellerList.get(position)
@@ -179,103 +189,133 @@ public class SellersListAdapter extends BaseAdapter {
 			public void onClick(DialogInterface dialog, int which) {
 			}
 		});
-		callNumberRL.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
 
-				MTAlertUtil.showMessesBox(context, "Phone", "Call "
-						+ mtSellerList.get(position).getSellerMobileNo() + "?",
-						new DialogInterface.OnClickListener() {
+		UserProfile profile = UserProfileCache.getUserProfile().getProfile();
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Intent callIntent = new Intent(
-										Intent.ACTION_CALL);
-								callIntent.setData(Uri.parse("tel:91"
-										+ mtSellerList.get(position)
-												.getSellerMobileNo()));
-								context.startActivity(callIntent);
+		if (profile != null
+				&& !mtSellerList.get(position).getSellerMobileNo()
+						.equalsIgnoreCase(profile.getMobile())) {
+			callNumberRL.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
 
-								Intent intent = new Intent(context,
-										RateUserActivity.class);
-								intent.putExtra("SELLER_INFO",
-										mtSellerList.get(position));
-								context.startActivity(intent);
+					MTAlertUtil.showMessesBox(context, "Phone", "Call "
+							+ mtSellerList.get(position).getSellerMobileNo()
+							+ "?", new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent callIntent = new Intent(Intent.ACTION_CALL);
+							callIntent.setData(Uri.parse("tel:+91"
+									+ mtSellerList.get(position)
+											.getSellerMobileNo()));
+							callIntent.putExtra("SELLER_INFO",
+									mtSellerList.get(position));
+							((Activity) context).startActivity(callIntent);
+
+							Intent intent = new Intent(context,
+									RateUserActivity.class);
+							intent.putExtra("SELLER_INFO",
+									mtSellerList.get(position));
+							context.startActivity(intent);
+
+						}
+					}, new DialogInterface.OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Intent intent = new Intent(context,
+									RateUserActivity.class);
+							intent.putExtra("SELLER_INFO",
+									mtSellerList.get(position));
+							context.startActivity(intent);
+						}
+					}, "Call", "Don't call");
+
+				}
+			});
+
+			updateInWishlistRL.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+
+					SharedPreferences preferences = PreferenceManager
+							.getDefaultSharedPreferences(context);
+					Gson gson = new Gson();
+					String json = null;
+					Editor prefsEditor = preferences.edit();
+					MTSellerList sellerList = null;
+
+					if (source.equalsIgnoreCase("WishlistFragment")) {
+						mtSellerList.remove(position);
+
+						sellerList = new MTSellerList();
+						sellerList.setMTSellerList(mtSellerList);
+
+						MTAlertUtil.showMessesBox(context, "Mandi Trades",
+								"Successfully Removed from WishList",
+								new DialogInterface.OnClickListener() {
+
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+
+										notifyDataSetChanged();
+									}
+								});
+
+					} else {
+
+						json = preferences.getString("WISH_LIST", null);
+
+						if (json != null) {
+							sellerList = gson
+									.fromJson(json, MTSellerList.class);
+
+							wishList = sellerList.getMTSellerList();
+
+							int index = Collections.binarySearch(wishList,
+									mtSellerList.get(position),
+									new MTSellerComparator());
+
+							if (index < 0) {
+								wishList.add(mtSellerList.get(position));
+								sellerList.setMTSellerList(wishList);
+
+								MTAlertUtil.showMessesBox(context,
+										"Mandi Trades",
+										"Successfully Added To Wishlist",
+										new DialogInterface.OnClickListener() {
+
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+
+											}
+										});
+
+							} else {
+								MTAlertUtil.showMessesBox(context,
+										"Mandi Trades", "Already in Wishlist.",
+										new DialogInterface.OnClickListener() {
+
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+
+											}
+										});
+
 							}
-						}, new DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Intent intent = new Intent(context,
-										RateUserActivity.class);
-								intent.putExtra("SELLER_INFO",
-										mtSellerList.get(position));
-								context.startActivity(intent);
-							}
-						}, "Call", "Don't call");
-
-			}
-		});
-
-		user_interested_rl.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View view) {
-				Intent intent = new Intent(context,
-						InterestedUserActivity.class);
-				intent.putExtra("INTERESTED_USERS", mtSellerList.get(position)
-						.getNoOfCalls());
-				context.startActivity(intent);
-			}
-		});
-
-		updateInWishlistRL.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				SharedPreferences preferences = PreferenceManager
-						.getDefaultSharedPreferences(context);
-				Gson gson = new Gson();
-				String json = null;
-				Editor prefsEditor = preferences.edit();
-				MTSellerList sellerList = null;
-
-				if (source.equalsIgnoreCase("WishlistFragment")) {
-					mtSellerList.remove(position);
-
-					sellerList = new MTSellerList();
-					sellerList.setMTSellerList(mtSellerList);
-
-					MTAlertUtil.showMessesBox(context, "Mandi Trades",
-							"Successfully Removed from WishList",
-							new DialogInterface.OnClickListener() {
-
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-
-									notifyDataSetChanged();
-								}
-							});
-
-				} else {
-
-					json = preferences.getString("WISH_LIST", null);
-
-					if (json != null) {
-						sellerList = gson.fromJson(json, MTSellerList.class);
-
-						wishList = sellerList.getMTSellerList();
-
-						int index = Collections.binarySearch(wishList,
-								mtSellerList.get(position),
-								new MTSellerComparator());
-
-						if (index < 0) {
+						} else {
+							wishList = new ArrayList<MTSeller>();
 							wishList.add(mtSellerList.get(position));
+
+							sellerList = new MTSellerList();
 							sellerList.setMTSellerList(wishList);
 
 							MTAlertUtil.showMessesBox(context, "Mandi Trades",
@@ -289,49 +329,35 @@ public class SellersListAdapter extends BaseAdapter {
 
 										}
 									});
-
-						} else {
-							MTAlertUtil.showMessesBox(context, "Mandi Trades",
-									"Already in Wishlist.",
-									new DialogInterface.OnClickListener() {
-
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-
-										}
-									});
-
 						}
-
-					} else {
-						wishList = new ArrayList<MTSeller>();
-						wishList.add(mtSellerList.get(position));
-
-						sellerList = new MTSellerList();
-						sellerList.setMTSellerList(wishList);
-
-						MTAlertUtil.showMessesBox(context, "Mandi Trades",
-								"Successfully Added To Wishlist",
-								new DialogInterface.OnClickListener() {
-
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-
-									}
-								});
 					}
-
+					if (sellerList != null) {
+						json = gson.toJson(sellerList);
+						prefsEditor.putString("WISH_LIST", json);
+						prefsEditor.commit();
+					}
 				}
-				if (sellerList != null) {
-					json = gson.toJson(sellerList);
-					prefsEditor.putString("WISH_LIST", json);
-					prefsEditor.commit();
+
+			});
+
+		} else {
+			callIV.setImageDrawable(null);
+			callIV.setImageResource(R.drawable.call_disabled);
+			updateInWishlistIV.setImageResource(R.drawable.add_heart_disabled);
+		}
+
+		user_interested_rl.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				if (mtSellerList.get(position).getNoOfCalls() != null
+						&& mtSellerList.get(position).getNoOfCalls().size() > 0) {
+					Intent intent = new Intent(context,
+							InterestedUserActivity.class);
+					intent.putExtra("INTERESTED_USERS",
+							mtSellerList.get(position).getNoOfCalls());
+					context.startActivity(intent);
 				}
 			}
-
 		});
 
 		directionRL.setOnClickListener(new OnClickListener() {
@@ -358,6 +384,7 @@ public class SellersListAdapter extends BaseAdapter {
 
 		return convertView;
 	}
+
 }
 
 class MTSellerComparator implements Comparator<MTSeller> {

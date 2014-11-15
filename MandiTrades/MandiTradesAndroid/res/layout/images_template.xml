@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.loopj.android.image.SmartImageView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/images_iv"
-    android:layout_width="200dp"
-    android:layout_height="200dp" >
-
-</com.loopj.android.image.SmartImageView>

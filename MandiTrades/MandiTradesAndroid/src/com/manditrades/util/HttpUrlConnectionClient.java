@@ -47,6 +47,7 @@ public class HttpUrlConnectionClient {
 					obj = new URL(url);
 					request = (HttpURLConnection) obj.openConnection();
 
+					request.setConnectTimeout(120000);
 					request.setUseCaches(false);
 					request.setDoOutput(true);
 					request.setDoInput(true);
@@ -55,6 +56,9 @@ public class HttpUrlConnectionClient {
 					OutputStream post = request.getOutputStream();
 					entity.writeTo(post);
 					post.flush();
+
+					System.out.println("********** "
+							+ request.getContentLength());
 
 					responseCode = request.getResponseCode();
 
@@ -91,6 +95,10 @@ public class HttpUrlConnectionClient {
 			in.close();
 
 			// String temp = response.toString();
+
+			if (url.contains("createEndpoint")) {
+				System.out.println();
+			}
 
 			if (response.toString().contains("root")) {
 				jObj = new JSONObject(response.toString());

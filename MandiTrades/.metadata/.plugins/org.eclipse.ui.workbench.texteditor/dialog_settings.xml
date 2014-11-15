@@ -3,36 +3,36 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="265" key="DIALOG_WIDTH"/>
 		<item value="600" key="DIALOG_Y_ORIGIN"/>
-		<item value="1426" key="DIALOG_X_ORIGIN"/>
 		<item value="399" key="DIALOG_HEIGHT"/>
+		<item value="1426" key="DIALOG_X_ORIGIN"/>
 		<item value="1|.Helvetica Neue DeskInterface|11.0|0|COCOA|1|.HelveticaNeueDeskInterface-Regular" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="true" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
+		<item value="true" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="saveCommodities" key="selection"/>
+		<item value="updateInWishlistIV" key="selection"/>
 		<list key="findhistory">
-			<item value="saveCommodities"/>
-			<item value="username"/>
-			<item value="profile"/>
-			<item value="Home"/>
-			<item value="mDrawerTitle"/>
-			<item value="setValues"/>
-			<item value="setProfile"/>
-			<item value="setVarieties"/>
+			<item value="updateInWishlistIV"/>
+			<item value="Data  collected  by  third"/>
+			<item value="MTAlertUtil"/>
+			<item value="ratetheapp"/>
+			<item value="deviceId"/>
+			<item value="submitMobileNumber"/>
+			<item value="mandiPricesTV"/>
+			<item value="v"/>
 		</list>
 		<list key="replacehistory">
+			<item value="android:paddingBottom=&quot;@dimen/padding_normal&quot;"/>
+			<item value=""/>
+			<item value="layout_gravity"/>
+			<item value="position - 1"/>
+			<item value="10"/>
 			<item value="@dimen/height_image_upload_icon"/>
 			<item value="height_image_upload_icon"/>
 			<item value="@dimen/height_image_upload_layout"/>
-			<item value=");"/>
-			<item value=")"/>
-			<item value="statesTree.add("/>
-			<item value=""/>
-			<item value="String"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">

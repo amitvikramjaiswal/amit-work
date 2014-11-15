@@ -1,0 +1,16 @@
+package com.manditrades.activities;
+
+import android.app.Activity;
+import android.os.Bundle;
+
+public class ShowEULAActivity extends Activity {
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
+		
+		
+	}
+	
+}

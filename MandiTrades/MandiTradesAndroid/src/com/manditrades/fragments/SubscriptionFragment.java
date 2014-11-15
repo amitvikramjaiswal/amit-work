@@ -1,20 +1,31 @@
 package com.manditrades.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ToggleButton;
 
 import com.manditrades.R;
+import com.manditrades.util.MTAlertUtil;
 
 public class SubscriptionFragment extends Fragment {
 
 	private View rootView;
 	private Context context;
 	private SharedPreferences preferences;
+	private ToggleButton basicSubscriptionTB;
+	private ToggleButton priceAlertPckgTB;
+	private ToggleButton contactSellerPckgTB;
+	private ToggleButton sellerBoostPckgTB;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,7 +43,105 @@ public class SubscriptionFragment extends Fragment {
 	}
 
 	private void setListeners() {
+		basicSubscriptionTB
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						if (!basicSubscriptionTB.isChecked())
+							MTAlertUtil
+									.showMessesBox(
+											context,
+											"Mandi Trades",
+											"Feature free for a limited period. \nEnjoy !!",
+											new OnClickListener() {
+
+												@Override
+												public void onClick(
+														DialogInterface dialogInterface,
+														int i) {
+													basicSubscriptionTB
+															.setChecked(true);
+												}
+											});
+					}
+				});
+
+		priceAlertPckgTB
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						if (!priceAlertPckgTB.isChecked())
+							MTAlertUtil
+									.showMessesBox(
+											context,
+											"Mandi Trades",
+											"Feature free for a limited period. \nEnjoy !!",
+											new OnClickListener() {
+
+												@Override
+												public void onClick(
+														DialogInterface dialogInterface,
+														int i) {
+													priceAlertPckgTB
+															.setChecked(true);
+												}
+											});
+					}
+				});
+
+		contactSellerPckgTB
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						if (!contactSellerPckgTB.isChecked())
+							MTAlertUtil
+									.showMessesBox(
+											context,
+											"Mandi Trades",
+											"Feature free for a limited period. \nEnjoy !!",
+											new OnClickListener() {
+
+												@Override
+												public void onClick(
+														DialogInterface dialogInterface,
+														int i) {
+													contactSellerPckgTB
+															.setChecked(true);
+												}
+											});
+					}
+				});
+
+		sellerBoostPckgTB
+				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						if (!sellerBoostPckgTB.isChecked())
+							MTAlertUtil
+									.showMessesBox(
+											context,
+											"Mandi Trades",
+											"Feature free for a limited period. \nEnjoy !!",
+											new OnClickListener() {
+
+												@Override
+												public void onClick(
+														DialogInterface dialogInterface,
+														int i) {
+													sellerBoostPckgTB
+															.setChecked(true);
+												}
+											});
+					}
+				});
 	}
 
 	private void setValues() {
@@ -40,7 +149,15 @@ public class SubscriptionFragment extends Fragment {
 	}
 
 	private void initComponents() {
-
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		basicSubscriptionTB = (ToggleButton) rootView
+				.findViewById(R.id.basic_subscription_toggle);
+		priceAlertPckgTB = (ToggleButton) rootView
+				.findViewById(R.id.price_alert_package_toggle);
+		contactSellerPckgTB = (ToggleButton) rootView
+				.findViewById(R.id.contact_seller_pkg_toggle);
+		sellerBoostPckgTB = (ToggleButton) rootView
+				.findViewById(R.id.seller_boost_pkg_toggle);
 	}
 
 }

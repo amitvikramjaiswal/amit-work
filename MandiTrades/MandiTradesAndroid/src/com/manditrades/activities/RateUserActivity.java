@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -19,12 +20,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.manditrades.R;
 import com.manditrades.jsonwrapper.MTSeller;
 import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTAlertUtil;
 import com.manditrades.util.MTURLHelper;
 
 public class RateUserActivity extends Activity {
@@ -35,11 +38,9 @@ public class RateUserActivity extends Activity {
 	private TextView usernameTV;
 	private RatingBar ratingBar;
 	private String mobileNo;
+	private String postId;
 	private String rating;
-	private String commodity;
 	private String buyerName;
-	private String price;
-	private String postDate;
 	private MTSeller seller;
 
 	@Override
@@ -67,9 +68,14 @@ public class RateUserActivity extends Activity {
 
 	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		preferences.edit().putBoolean("UPDATE", true).commit();
+	}
+
 	protected void rateUser() {
-		String url = MTURLHelper
-				.getAPIEndpointURL(MTURLHelper.rateUserURL);
+		String url = MTURLHelper.getAPIEndpointURL(MTURLHelper.rateUserURL);
 		String method = "POST";
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
@@ -85,7 +91,17 @@ public class RateUserActivity extends Activity {
 			public void receiveData(JSONObject responseJson) {
 				try {
 					JSONObject root = responseJson.getJSONObject("root");
+					if (root.toString().contains("success"))
+						MTAlertUtil.showMessesBox(context, "Mandi Trades",
+								"Successfully Rated",
+								new DialogInterface.OnClickListener() {
 
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										finish();
+									}
+								});
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -111,7 +127,10 @@ public class RateUserActivity extends Activity {
 
 		customView.setText("Rate User");
 
-		Button skipButton = (Button) view.findViewById(R.id.backBtn);
+		Button skipButton = (Button) view.findViewById(R.id.skipBtn);
+		ImageButton backButton = (ImageButton) view.findViewById(R.id.backBtn);
+		backButton.setVisibility(View.GONE);
+		skipButton.setVisibility(View.VISIBLE);
 		skipButton.setText("Skip");
 		skipButton.setOnClickListener(new OnClickListener() {
 
@@ -137,11 +156,8 @@ public class RateUserActivity extends Activity {
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-		params.add(new BasicNameValuePair("seller_mobile", mobileNo));
-		params.add(new BasicNameValuePair("commodity", commodity));
+		params.add(new BasicNameValuePair("post_id", postId));
 		params.add(new BasicNameValuePair("buyer_name", buyerName));
-		params.add(new BasicNameValuePair("price", price));
-		params.add(new BasicNameValuePair("date_post", postDate));
 
 		System.out.println(params);
 
@@ -151,15 +167,16 @@ public class RateUserActivity extends Activity {
 
 			@Override
 			public void receiveData(JSONObject responseJson) {
-				try {
-					JSONObject root = responseJson.getJSONObject("root");
-					System.out.println("##### " + root.toString());
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
+				finish();
 			}
 		};
 		callback.execute(object);
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		updateInterestedUserCount();
 	}
 
 	private void initComponents() {
@@ -168,10 +185,10 @@ public class RateUserActivity extends Activity {
 		usernameTV = (TextView) findViewById(R.id.name);
 		ratingBar = (RatingBar) findViewById(R.id.rating_bar);
 
+		postId = seller.getSellerId().getId();
 		mobileNo = seller.getSellerMobileNo();
-		commodity = seller.getSellerCommodity();
 		buyerName = preferences.getString("USERNAME", "");
-		price = seller.getSellerPrice().replace(" per kg", "");
-		postDate = seller.getDOC().getDate();
+
+		usernameTV.setText(seller.getSellerName());
 	}
 }

@@ -33,7 +33,7 @@ public class MandiNewsDetail extends Activity {
 
 		mtNews = (MTNews) getIntent().getExtras().getSerializable("NEWS_DATA");
 
-		imageView.setImageUrl(String.format("%s/%s",
+		imageView.setImageUrl(String.format("%s/apimandi/v1/%s",
 				MTURLHelper.DEVELOPMENT_IP, mtNews.getImage()));
 		headingTV.setText(mtNews.getHeading());
 		newsTV.setText(mtNews.getContent());

@@ -1,6 +1,13 @@
 package com.manditrades.pushreceiver;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,6 +17,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.os.AsyncTask;
 import android.os.Build.VERSION;
 import android.os.Bundle;
@@ -19,8 +28,12 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.internal.ex;
 import com.manditrades.R;
 import com.manditrades.activities.HomeActivity;
+import com.manditrades.util.BadgeUtil;
+import com.manditrades.util.JsonDataCallback;
+import com.manditrades.util.MTURLHelper;
 
 /*
  * This service is designed to run in the background and receive messages from gcm. If the app is in the foreground
@@ -30,8 +43,15 @@ import com.manditrades.activities.HomeActivity;
 public class MessageReceivingService extends Service {
 	private GoogleCloudMessaging gcm;
 	public static SharedPreferences savedValues;
+	public static SharedPreferences preferences;
 
 	public static void sendToApp(Bundle extras, Context context) {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		preferences
+				.edit()
+				.putInt("BADGE",
+						Integer.parseInt(extras.getString("badge") != null ? extras
+								.getString("badge") : "0")).commit();
 		// Intent newIntent = new Intent();
 		// newIntent.setClass(context, HomeActivity.class);
 		// newIntent.putExtras(extras);
@@ -63,6 +83,12 @@ public class MessageReceivingService extends Service {
 	}
 
 	protected static void saveToLog(Bundle extras, Context context) {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		preferences
+				.edit()
+				.putInt("BADGE",
+						Integer.parseInt(extras.getString("badge") != null ? extras
+								.getString("badge") : "0")).commit();
 		SharedPreferences.Editor editor = savedValues.edit();
 		String numOfMissedMessages = context
 				.getString(R.string.num_of_missed_messages);
@@ -79,21 +105,30 @@ public class MessageReceivingService extends Service {
 		editor.putInt(numOfMissedMessages,
 				savedValues.getInt(numOfMissedMessages, 0) + 1);
 		editor.commit();
-		postNotification(new Intent(context, HomeActivity.class), context);
+		postNotification(new Intent(context, HomeActivity.class), context,
+				extras.getString("message"), extras.getString("badge"));
 	}
 
-	protected static void postNotification(Intent intentAction, Context context) {
+	protected static void postNotification(Intent intentAction,
+			Context context, String message, String badge) {
 		final NotificationManager mNotificationManager = (NotificationManager) context
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		final PendingIntent pendingIntent = PendingIntent.getActivity(context,
 				0, intentAction, Notification.DEFAULT_LIGHTS
 						| Notification.FLAG_AUTO_CANCEL);
+
+		BadgeUtil.setBadge(context, Integer.parseInt(badge));
+
 		final Notification notification = new NotificationCompat.Builder(
-				context).setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle("Message Received!").setContentText("")
+				context).setSmallIcon(R.drawable.appicon)
+				.setContentTitle("Mandi Trades").setContentText(message)
 				.setContentIntent(pendingIntent).setAutoCancel(true)
 				.getNotification();
+
+		notification.defaults |= Notification.DEFAULT_SOUND;
+		notification.defaults |= Notification.DEFAULT_LIGHTS;
+		notification.defaults |= Notification.DEFAULT_VIBRATE;
 
 		mNotificationManager.notify(R.string.notification_number, notification);
 	}
@@ -101,8 +136,10 @@ public class MessageReceivingService extends Service {
 	private void register(final Context context) {
 		gcm = GoogleCloudMessaging.getInstance(getApplicationContext());
 		new AsyncTask() {
+			String token;
+
 			protected Object doInBackground(final Object... params) {
-				String token;
+
 				try {
 					token = gcm.register(getString(R.string.project_number));
 					SharedPreferences savedValues = PreferenceManager
@@ -116,11 +153,46 @@ public class MessageReceivingService extends Service {
 				}
 				return true;
 			}
+
+			protected void onPostExecute(Object result) {
+				createEndPoint(token, context);
+			};
+
 		}.execute(null, null, null);
 	}
 
 	public IBinder onBind(Intent arg0) {
 		return null;
+	}
+
+	private void createEndPoint(String deviceToken, final Context context) {
+		String url = MTURLHelper
+				.getAPIEndpointProductionURL(MTURLHelper.createEndpointURL);
+		String method = "POST";
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("deviceToken", deviceToken));
+		params.add(new BasicNameValuePair("device", "android"));
+
+		Object[] objects = { url, method, params };
+
+		JsonDataCallback callback = new JsonDataCallback(context) {
+			@Override
+			public void receiveData(JSONObject responseJson) {
+				try {
+					SharedPreferences sharedPreferences = PreferenceManager
+							.getDefaultSharedPreferences(context);
+					String endpoint = responseJson.getJSONObject("root")
+							.getString("endpoint");
+					Editor editor = sharedPreferences.edit();
+					editor.putString("ENDPOINT", endpoint);
+					editor.commit();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		callback.execute(objects);
 	}
 
 }

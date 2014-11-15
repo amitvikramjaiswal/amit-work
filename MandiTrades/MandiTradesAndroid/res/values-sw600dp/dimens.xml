@@ -6,14 +6,15 @@
     -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="text_size_normal">16sp</dimen>
-    <dimen name="text_size_small">14sp</dimen>
-    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_normal">18sp</dimen>
+    <dimen name="text_size_small">16sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
     <dimen name="width_small_field_1">150dp</dimen>
     <dimen name="width_small_field_2">100dp</dimen>
     <dimen name="height_row">50dp</dimen>
     <dimen name="height_button">70dp</dimen>
     <dimen name="margin_left_right">10dp</dimen>
+    <dimen name="margin_address">20dp</dimen>
     <dimen name="width_large_field">260dp</dimen>
     <dimen name="size_icon">50dp</dimen>
     <dimen name="text_size_heading">22sp</dimen>
@@ -27,6 +28,7 @@
     <dimen name="padding_main_menu_icon">30dp</dimen>
     <dimen name="padding_main_menu_layout">15dp</dimen>
     <dimen name="size_main_menu_icon_rl">142dp</dimen>
+    <dimen name="slidermenu_width">250dp</dimen>
 
     <!-- New Sale Commodity Page -->
 
@@ -43,11 +45,12 @@
     <dimen name="text_size_commodity_name">18sp</dimen>
 
     <!-- New Sale Post Page -->
-    <dimen name="width_label_column">140dp</dimen>
+    <dimen name="width_label_column">160dp</dimen>
     <dimen name="image_height">300dp</dimen>
     <dimen name="padding_image">5dp</dimen>
     <dimen name="padding_normal">10dp</dimen>
     <dimen name="padding_small">5dp</dimen>
+    <dimen name="text_size_timer">30sp</dimen>
 
     <!-- NEWS Page -->
     <dimen name="width_news_image">120dp</dimen>
@@ -55,9 +58,9 @@
     <dimen name="cart_label_radious">15dp</dimen>
     <dimen name="home_screen_first_row_top_margin">12dp</dimen>
     <dimen name="main_menu_top_margin">50dp</dimen>
-    
+
     <!-- Image Upload -->
-    
+
     <dimen name="height_image_upload_layout">140dp</dimen>
     <dimen name="height_image_upload_icon">110dp</dimen>
 

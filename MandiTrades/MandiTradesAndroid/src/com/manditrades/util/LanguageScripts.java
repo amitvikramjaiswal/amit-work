@@ -46,7 +46,11 @@ public class LanguageScripts {
 
 	public String[] sellersInformation;
 
-	private String[] viewAlerts;
+	public String[] viewAlerts;
+
+	public String[] ratetheapp;
+
+	public String[] sharetheapp;
 
 	// select commodity page
 	// public String[]
@@ -232,6 +236,14 @@ public class LanguageScripts {
 		sellersInformation = new String[] { "Seller's Information",
 				"विक्रेता  सूचना", "విక్రేతలు సమాచారం", "ಮಾರಾಟಗಾರರ ಪಟ್ಟಿ",
 				" விற்பனையாளர்கள்  தகவல்", "വിവരങ്ങൾ" };
+
+		ratetheapp = new String[] { "Rate the App", "रेट  द  एप्प",
+				"రేట్ ద ఆప్ప్", "ರೇಟ್  ದಿ ಆಪ್ಪ್", "ரேட் தி ஆப்ப",
+				"റേറ്റ് ദി ആപ്പ്" };
+
+		sharetheapp = new String[] { "Share the App", "शेयर द  एप्प ",
+				"షేర్ ది ఆప్ప్ ", "ಶೇರ್ ದಿ ಆಪ್ಪ್ ", "ஷேர் தி ஆப்ப ",
+				"ഷെയർ ദി ആപ്പ് " };
 
 	}
 }

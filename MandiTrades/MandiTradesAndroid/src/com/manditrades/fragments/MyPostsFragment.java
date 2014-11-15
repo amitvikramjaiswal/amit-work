@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.manditrades.R;
 import com.manditrades.adapters.MyPostAdapter;
 import com.manditrades.jsonwrapper.MTSeller;
@@ -57,15 +59,14 @@ public class MyPostsFragment extends Fragment {
 	private void makeMyPostRequest() {
 		String mobileNo = preferences.getString("MOBILE_NO", "");
 
-		String url = MTURLHelper
-				.getAPIEndpointURL(MTURLHelper.myPostURL);
+		String url = MTURLHelper.getAPIEndpointURL(MTURLHelper.myPostURL);
 
 		String method = "POST";
 
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 
 		params.add(new BasicNameValuePair("from", "1"));
-		params.add(new BasicNameValuePair("to", "10"));
+		params.add(new BasicNameValuePair("to", "50"));
 		params.add(new BasicNameValuePair("seller_mobile", mobileNo));
 
 		Object[] object = { url, method, params, null };
@@ -74,15 +75,21 @@ public class MyPostsFragment extends Fragment {
 
 			@Override
 			public void receiveData(JSONObject responseJson) {
+				try {
+					if (!responseJson.get("root").toString().contains("status")) {
+						Gson gson = new Gson();
+						MTSellerList sellerList = gson.fromJson(
+								responseJson.toString(), MTSellerList.class);
 
-				Gson gson = new Gson();
-				MTSellerList sellerList = gson.fromJson(
-						responseJson.toString(), MTSellerList.class);
-
-				mtSellerList = sellerList.getMTSellerList();
-				myPostAdapter = new MyPostAdapter(context, mtSellerList);
-				myPostLV.setAdapter(myPostAdapter);
-
+						mtSellerList = sellerList.getMTSellerList();
+						myPostAdapter = new MyPostAdapter(context, mtSellerList);
+						myPostLV.setAdapter(myPostAdapter);
+					}
+				} catch (JsonSyntaxException e) {
+					e.printStackTrace();
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		};
 		callback.execute(object);

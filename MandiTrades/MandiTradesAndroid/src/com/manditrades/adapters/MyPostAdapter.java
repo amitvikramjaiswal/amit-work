@@ -98,9 +98,10 @@ public class MyPostAdapter extends BaseAdapter {
 						.getDateFromString(mtSellerList.get(position).getDOC()
 								.getDate())));
 
-		quantity.setText(mtSellerList.get(position).getSellerQuantity());
+		quantity.setText(mtSellerList.get(position).getSellerQuantity()
+				+ "Kg available");
 
-		price.setText(mtSellerList.get(position).getSellerPrice());
+		price.setText(mtSellerList.get(position).getSellerPrice() + " per kg");
 
 		commodity.setText(mtSellerList.get(position).getSellerCommodity());
 
@@ -135,7 +136,6 @@ public class MyPostAdapter extends BaseAdapter {
 										"Mandi Trades",
 										"Post Deleted Successfully",
 										new DialogInterface.OnClickListener() {
-
 											@Override
 											public void onClick(
 													DialogInterface dialogInterface,
@@ -145,7 +145,6 @@ public class MyPostAdapter extends BaseAdapter {
 											}
 										});
 							}
-
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}

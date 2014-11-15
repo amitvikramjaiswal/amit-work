@@ -1,0 +1,91 @@
+package com.manditrades.activities;
+
+import com.manditrades.R;
+import com.manditrades.util.MTUtil;
+
+import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.webkit.WebView;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+
+public class ShowEULAActivity extends Activity {
+
+	private WebView termsWV;
+	private SharedPreferences preferences;
+	private Context context;
+	private Button acceptBtn;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.activity_terms);
+
+		context = this;
+
+		initComponents();
+		setActionBar();
+		setValues();
+
+	}
+
+	private void setActionBar() {
+		MTUtil.setActionBar(context, "END USER LICENCE AGREEMENT", true);
+		
+		final Activity activity = (Activity) context;
+		activity.getActionBar()
+				.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+		activity.getActionBar().setCustomView(
+				R.layout.layout_action_bar_govt_feedback);
+
+		View view = LayoutInflater.from(activity).inflate(
+				R.layout.layout_action_bar_govt_feedback, null);
+
+		TextView customView = (TextView) view
+				.findViewById(R.id.action_bar_title);
+
+		customView.setText("Settings");
+
+		leftButton = (Button) view.findViewById(R.id.exitBtn);
+		rightButton = (Button) view.findViewById(R.id.nextBtn);
+		backButton = (ImageButton) view.findViewById(R.id.backBtn);
+
+		ActionBar.LayoutParams params = new ActionBar.LayoutParams(
+				ActionBar.LayoutParams.MATCH_PARENT,
+				ActionBar.LayoutParams.MATCH_PARENT, Gravity.CENTER);
+
+		activity.getActionBar().setCustomView(view, params);
+	}
+
+	private void setValues() {
+		termsWV.loadData(
+				context.getResources().getString(R.string.termsconditions),
+				"text/html", "utf-8");
+		acceptBtn.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent intent = new Intent(getApplicationContext(),
+						SignInSignUpActivity.class);
+				startActivity(intent);
+			}
+		});
+	}
+
+	private void initComponents() {
+		preferences = PreferenceManager.getDefaultSharedPreferences(context);
+		termsWV = (WebView) findViewById(R.id.terms);
+		acceptBtn = (Button) findViewById(R.id.accept_btn);
+	}
+
+}
